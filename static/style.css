@@ -29,9 +29,11 @@ th, td {
     padding: 0.5em;
 }
 
-code.language-bad, code.language-good {
+pre > code {
     padding: 1em;
     display: block;
+    background-color: #f8f8f8;
+    border-radius: 0.5em;
 }
 
 code.language-bad {

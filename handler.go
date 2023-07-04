@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"unicode"
 
 	"github.com/peterbourgon/diskv/v3"
 )
@@ -56,7 +57,7 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := pageTmpl
 	pv := &pageValues{
-		Title:    pageName, // XXX insert spaces before capitals?
+		Title:    insertSpaces(pageName),
 		PageName: pageName,
 	}
 
@@ -140,6 +141,20 @@ var fullPageNameRE = regexp.MustCompile(`^` + pageNameRE.String() + `$`)
 // isPageName returns true iff pn is a camel case page name.
 func isPageName(pn string) bool {
 	return fullPageNameRE.MatchString(pn)
+}
+
+// insertSpaces inserts spaces before every non-leading capital letter
+func insertSpaces(pn string) string {
+	var bld strings.Builder
+	bld.Grow(len(pn) + 3)
+	for pos, rn := range pn {
+		if unicode.IsUpper(rn) && pos > 0 {
+			bld.WriteByte(' ')
+		}
+		// Guaranteed to not return errors.
+		bld.WriteRune(rn)
+	}
+	return bld.String()
 }
 
 func contentValue(r *http.Request) string {

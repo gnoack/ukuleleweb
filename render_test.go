@@ -48,6 +48,10 @@ func TestRender(t *testing.T) {
 			Want:  `<p>Hello <a href="http://go/long/go-link">go/long/go-link</a>!</p>` + "\n",
 		},
 		{
+			Input: "Hello go/link#with-anchor!",
+			Want:  `<p>Hello <a href="http://go/link#with-anchor">go/link#with-anchor</a>!</p>` + "\n",
+		},
+		{
 			// Should not recognize the inner mention of 'ExamplePage'.
 			Input: `<a href="http://wiki/ExamplePage">To the wiki!</a>`,
 			Want:  `<p><a href="http://wiki/ExamplePage">To the wiki!</a></p>` + "\n",

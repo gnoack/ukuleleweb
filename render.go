@@ -55,14 +55,14 @@ func OutgoingLinks(md string) map[string]bool {
 	return found
 }
 
-// ReverseLinks calculates the reverse link map for the whole wiki.
+// AllReverseLinks calculates the reverse link map for the whole wiki.
 // The returned map maps page names to a list of pages linking to it.
 // Sets of pages are represented as sorted lists.
 func AllReverseLinks(d *diskv.Diskv) map[string][]string {
 	revLinks := make(map[string]map[string]bool)
 	for p := range d.Keys(nil) {
 		pOut := OutgoingLinks(d.ReadString(p))
-		for q, _ := range pOut {
+		for q := range pOut {
 			qIn, ok := revLinks[q]
 			if !ok {
 				qIn = make(map[string]bool)
@@ -81,7 +81,7 @@ func AllReverseLinks(d *diskv.Diskv) map[string][]string {
 
 func sortedStringSlice(a map[string]bool) []string {
 	var res []string
-	for k, _ := range a {
+	for k := range a {
 		res = append(res, k)
 	}
 	sort.Strings(res)

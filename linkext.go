@@ -38,7 +38,7 @@ func (w *wikiLinkParser) Trigger() []byte {
 	return []byte{' '}
 }
 
-func (s *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) (res ast.Node) {
+func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) (res ast.Node) {
 	if pc.IsInLinkLabel() {
 		return nil
 	}

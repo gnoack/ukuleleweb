@@ -4,10 +4,10 @@ go 1.17
 
 require (
 	github.com/gopikchr/goldmark-pikchr v0.0.0-20220131141231-75943048acca
-	github.com/landlock-lsm/go-landlock v0.0.0-20230607164353-b03374193cb2
+	github.com/landlock-lsm/go-landlock v0.0.0-20240119214949-7547b7fce44e
 	github.com/peterbourgon/diskv/v3 v3.0.1
-	github.com/yuin/goldmark v1.5.4
-	golang.org/x/sys v0.8.0
+	github.com/yuin/goldmark v1.6.0
+	golang.org/x/sys v0.16.0
 )
 
 require (

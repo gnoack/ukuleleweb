@@ -13,9 +13,6 @@ import (
 	"github.com/peterbourgon/diskv/v3"
 )
 
-//go:embed static/*
-var StaticFiles embed.FS
-
 //go:embed templates/*
 var templateFiles embed.FS
 
@@ -45,12 +42,8 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
 	w.Header().Set("Referrer-Policy", "no-referrer")
 
-	if r.URL.Path == "/" {
-		http.Redirect(w, r, "/"+h.MainPage, http.StatusMovedPermanently)
-		return
-	}
-	pageName := getPageName(r.URL.Path)
-	if pageName == "" {
+	pageName := r.PathValue("pageName")
+	if !isPageName(pageName) {
 		http.Error(w, "Invalid page name", http.StatusNotFound)
 		return
 	}
@@ -122,18 +115,6 @@ func (h *PageHandler) recalculateRevLinks() {
 	h.revLinksMu.Lock()
 	defer h.revLinksMu.Unlock()
 	h.revLinks = rl
-}
-
-func getPageName(path string) string {
-	if !strings.HasPrefix(path, "/") {
-		return ""
-	}
-	path = path[1:]
-
-	if !isPageName(path) {
-		return ""
-	}
-	return path
 }
 
 var fullPageNameRE = regexp.MustCompile(`^` + pageNameRE.String() + `$`)

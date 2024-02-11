@@ -31,11 +31,7 @@ func main() {
 		BasePath:     *storeDir,
 		CacheSizeMax: 1024 * 1024, // 1MB
 	})
-	http.Handle("/static/", http.FileServer(http.FS(ukuleleweb.StaticFiles)))
-	http.Handle("/", &ukuleleweb.PageHandler{
-		MainPage: *mainPage,
-		D:        d,
-	})
+	ukuleleweb.AddRoutes(http.DefaultServeMux, *mainPage, d)
 
 	s := http.Server{}
 	l, err := net.Listen(*listenNet, *listenAddr)

@@ -3,6 +3,7 @@ package ukuleleweb
 import (
 	"bytes"
 	"regexp"
+	"slices"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -35,7 +36,7 @@ func (e *wikiLinkExt) Extend(m goldmark.Markdown) {
 type wikiLinkParser struct{}
 
 func (w *wikiLinkParser) Trigger() []byte {
-	return []byte{' '}
+	return []byte{' ', '('}
 }
 
 func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) (res ast.Node) {
@@ -45,13 +46,13 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	line, segment := block.PeekLine()
 
 	// Implementation note:
-	// The trigger ' ' above triggers for any space character, as well as for newlines.
+	// The trigger above triggers for the given characters, as well as for newlines.
 	// Parse() below must be able to recognize both lines starting with "WikiLink..."
-	// as well as lines starting with " WikiLink..." (for any leading space character).
-	// If the line does start with a space, then *on a successful parse*,
-	// that space must be inserted into the parent node before returning.
-	if len(line) > 0 && util.IsSpace(line[0]) {
-		spaceSeg := segment.WithStop(segment.Start + 1)
+	// as well as lines starting with " WikiLink..." (for any leading trigger character).
+	// If the line does start with a trigger, then *on a successful parse*,
+	// that trigger must be inserted into the parent node before returning.
+	if len(line) > 0 && slices.Contains(w.Trigger(), line[0]) {
+		prefixSeg := segment.WithStop(segment.Start + 1)
 
 		// Move line and segment one character further
 		// and continue the parsing as if we had not started with a space.
@@ -64,7 +65,7 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 			if res == nil {
 				return
 			}
-			ast.MergeOrAppendTextSegment(parent, spaceSeg)
+			ast.MergeOrAppendTextSegment(parent, prefixSeg)
 		}()
 	}
 

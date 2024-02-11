@@ -36,6 +36,10 @@ func TestRender(t *testing.T) {
 			Want:  `<p>at the end a   <a href="/WikiLink">WikiLink</a></p>` + "\n",
 		},
 		{
+			Input: "just (WikiLinkInBrackets)",
+			Want:  `<p>just (<a href="/WikiLinkInBrackets">WikiLinkInBrackets</a>)</p>` + "\n",
+		},
+		{
 			Input: `<a href="http://wiki/">To the wiki!</a>`,
 			Want:  `<p><a href="http://wiki/">To the wiki!</a></p>` + "\n",
 		},

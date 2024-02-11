@@ -1,6 +1,6 @@
 module github.com/gnoack/ukuleleweb
 
-go 1.17
+go 1.22
 
 require (
 	github.com/gopikchr/goldmark-pikchr v0.0.0-20220131141231-75943048acca

@@ -19,13 +19,14 @@ p > * {
 }
 table {
     margin-left: 2em;
-    border-spacing: 0;
+    border-collapse: collapse;
 }
 th {
-    border-bottom: 1px solid #bdbdbd;
     text-align: left;
+    background-color: #0000001a;
 }
 th, td {
+    border: 1px solid #00000040;
     padding: 0.5em;
 }
 

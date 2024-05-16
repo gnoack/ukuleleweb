@@ -33,16 +33,16 @@ th, td {
 pre > code {
     padding: 1em;
     display: block;
-    background-color: #f8f8f8;
+    background-color: #00000008;
     border-radius: 0.5em;
 }
 
 code.language-bad {
     color: #f33;
-    background-color: #fee;
+    background-color: #f001;
 }
 
 code.language-good {
     color: #181;
-    background-color: #efe;
+    background-color: #0f01;
 }

@@ -1,7 +1,10 @@
 # Ukuleleweb
 
-Ukuleleweb is a simple Wiki implementation in the style of the
+🌺 Ukuleleweb is a simple Wiki implementation in the style of the
 original WikiWikiWeb / C2 wiki.
+
+You can see it in action on [wiki.gnoack.org](https://wiki.gnoack.org/),
+where you can also find [some documentation](https://wiki.gnoack.org/UkuleleWeb).
 
 ![Unit tests](https://github.com/gnoack/ukuleleweb/actions/workflows/go.yml/badge.svg)
 
@@ -20,6 +23,7 @@ control.
 ## Features
 
 * Recognizes WikiLinks in the classic WikiWikiWeb style (just CamelCasedWords).
+* Recognizes go-link syntax (go/ukuleleweb)
 * Displays reverse links at the bottom of each page. (Reverse links
   are recalculated when saving a page.)
 * Each wiki page is a file on disk, it's easy to add small analysis

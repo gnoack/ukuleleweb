@@ -2,6 +2,7 @@ package ukuleleweb
 
 import (
 	"embed"
+	"flag"
 	"html/template"
 	"log"
 	"net/http"
@@ -13,12 +14,19 @@ import (
 	"github.com/peterbourgon/diskv/v3"
 )
 
+var (
+	cssURL     = flag.String("brand.css_url", "/static/style.css", "The URL for the CSS file")
+	faviconURL = flag.String("brand.favicon_url", "/static/favicon.png", "The URL for the favicon")
+)
+
 //go:embed templates/*
 var templateFiles embed.FS
 
-var baseTmpl = template.Must(template.New("layout").ParseFS(templateFiles, "templates/base/*.html"))
-var pageTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/page.html"))
-var editTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/edit.html"))
+var (
+	baseTmpl = template.Must(template.New("layout").ParseFS(templateFiles, "templates/base/*.html"))
+	pageTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/page.html"))
+	editTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/edit.html"))
+)
 
 type pageValues struct {
 	Title         string
@@ -27,6 +35,8 @@ type pageValues struct {
 	SourceContent string
 	Error         string
 	ReverseLinks  []string
+	FaviconURL    string
+	CSSURL        string
 }
 
 type PageHandler struct {
@@ -50,8 +60,10 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := pageTmpl
 	pv := &pageValues{
-		Title:    insertSpaces(pageName),
-		PageName: pageName,
+		Title:      insertSpaces(pageName),
+		PageName:   pageName,
+		FaviconURL: *faviconURL,
+		CSSURL:     *cssURL,
 	}
 
 	if r.FormValue("edit") == "1" {

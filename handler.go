@@ -16,7 +16,7 @@ import (
 
 var (
 	cssURL     = flag.String("brand.css_url", "/static/style.css", "The URL for the CSS file")
-	faviconURL = flag.String("brand.favicon_url", "/static/favicon.png", "The URL for the favicon")
+	faviconURL = flag.String("brand.favicon_url", "/static/favicon.svg", "The URL for the favicon")
 )
 
 //go:embed templates/*

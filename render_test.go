@@ -163,3 +163,12 @@ func TestFullPageRendering(t *testing.T) {
 		})
 	}
 }
+
+//go:embed testdata/wiki/UkuleleWeb
+var ukuleleWebPage string
+
+func BenchmarkRender(b *testing.B) {
+	for range b.N {
+		_, _ = RenderHTML(ukuleleWebPage)
+	}
+}

@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	pageNameRE = regexp.MustCompile(`\b([A-ZÄÖÜ][a-zäöüß]+){2,}\b`)
-	goLinkRE   = regexp.MustCompile(`\bgo/[A-Za-z0-9#/_+öäüÖÄÜß-]+\b`)
+	pageNameRE = regexp.MustCompile(`^([A-ZÄÖÜ][a-zäöüß]+){2,}\b`)
+	goLinkRE   = regexp.MustCompile(`^go/[A-Za-z0-9#/_+öäüÖÄÜß-]+\b`)
 )
 
 // wikiLinkExt is a goldmark extension for recognizing WikiLinks and go/links.

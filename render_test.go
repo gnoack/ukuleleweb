@@ -1,8 +1,14 @@
 package ukuleleweb
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+
+	_ "embed"
 )
 
 func TestRender(t *testing.T) {
@@ -115,5 +121,45 @@ func TestOutgoingLinks(t *testing.T) {
 		if strings.Join(got, ",") != strings.Join(tt.Want, ",") {
 			t.Errorf("OutgoingLinks(%q) = %v, want %v", tt.Input, got, tt.Want)
 		}
+	}
+}
+
+func mustReadFile(t testing.TB, path string) string {
+	t.Helper()
+
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("io.ReadAll(%q): %v", path, err)
+	}
+	return string(b)
+}
+
+func TestFullPageRendering(t *testing.T) {
+	entries, err := os.ReadDir(filepath.Join("testdata", "wiki"))
+	if err != nil {
+		t.Fatalf("os.ReadDir: %v", err)
+	}
+	if len(entries) == 0 {
+		t.Error("Missing test data")
+	}
+
+	for _, dirent := range entries {
+		var (
+			pageName = dirent.Name()
+			wikiPath = filepath.Join("testdata", "wiki", pageName)
+			wantPath = filepath.Join("testdata", "want", pageName)
+			md       = mustReadFile(t, wikiPath)
+			want     = mustReadFile(t, wantPath)
+		)
+
+		t.Run(pageName, func(t *testing.T) {
+			got, err := RenderHTML(md)
+			if err != nil {
+				t.Fatalf("RenderHTML: unexpected error: %v", err)
+			}
+			if diff := cmp.Diff(got, want); diff != "" {
+				t.Errorf("RenderHTML: unexpected output (-got +want):\n%v", diff)
+			}
+		})
 	}
 }

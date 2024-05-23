@@ -1,0 +1,53 @@
+💾 [Git](https://github.com/gnoack/ukuleleweb)
+
+## Overview
+
+🌺 UkuleleWeb is a minimalist Markdown-based wiki loosely based on the design of the original WikiWikiWeb.
+
+Original Launch announcement:
+
+> Got frustrated with overkill wiki software and built my own WikiWikiWeb clone [https://t.co/kXEUVqWieQ](https://github.com/gnoack/ukuleleweb) (< 400 LoC of Go, 3 dependencies, syntax is markdown with CamelCaseWikiLinks, 2 shell commands to install and run it). I'm using it daily for the past 2 weeks.
+>
+> — gnoack (@gnoack3000) February 8, 2022
+
+## Features
+
+UkuleleWeb suppports a small set of features on top:
+
+* Syntax
+  * **Markdown syntax** for wiki pages
+  * **Shortlinks** prefixed with "go/": go/wiki
+  * **Diagrams in PIC syntax** with GoPikchr
+* **Slightly nicer CSS** for tables and inline code blocks
+* **Backlinks** listed at the bottom of every page
+
+Some examples: UkuleleWebSyntax
+
+## Non-features
+
+UkuleleWeb is opinionated and minimal.
+
+Instead of adding many features to UkuleleWeb itself,
+UkuleleWeb exposes its internals so that they are easy to manipulate and extend.
+A variety of things can be done in reverse proxies,
+and pages are stored as plain files on disk for easy manipulation.
+Each file is named like a wiki page and stores that page's Markdown source.
+
+Feature              | How to implement it
+---------------------|-----------------------------------------------------
+Theming              | Override the CSS in a reverse proxy (UkuleleWebTheming)
+User Authentication  | Implement it in a reverse proxy
+Wiki page versioning | Use common version control software or file system features on the wiki's file storage
+Special wiki pages   | Can be generated with shell scripts and Unix tools into the storage directory
+
+It is good to have fewer features,
+because that means that UkuleleWeb is solid and stable.
+
+## Installation
+
+Prerequisites: Unix, Go
+
+```good
+go install github.com/gnoack/ukuleleweb/cmd/ukuleleweb@latest
+~/go/bin/ukuleleweb -store_dir=/some/emtpy/directory
+```

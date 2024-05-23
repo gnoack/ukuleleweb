@@ -3,6 +3,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/google/btree v1.0.0/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
 github.com/google/btree v1.1.2 h1:xf4v41cLI2Z6FxbKm+8Bu+m8ifhj15JuZ9sa0jZCMUU=
 github.com/google/btree v1.1.2/go.mod h1:qOPhT0dTNdNzV6Z/lhRX0YXUafgPLFUh+gZMl761Gm4=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/gopikchr/goldmark-pikchr v0.0.0-20220131141231-75943048acca h1:2U+7XbYYcd2wj1HY0oeGtOJdMehapbuqnim32o3LX/Q=
 github.com/gopikchr/goldmark-pikchr v0.0.0-20220131141231-75943048acca/go.mod h1:nPEBlVvLSeNY4zJZeWCVyYmLlJnkX7DEdzQQzWfSA+Y=
 github.com/gopikchr/gopikchr v0.0.0-20221215031430-01a0b7befa01 h1:E4qOlkyAH58CfHKaWmTc1b37HbNUW3NTU1OmbFMfuII=

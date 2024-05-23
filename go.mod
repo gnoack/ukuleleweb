@@ -12,6 +12,7 @@ require (
 
 require (
 	github.com/google/btree v1.1.2 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/gopikchr/gopikchr v0.0.0-20221215031430-01a0b7befa01 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	kernel.org/pub/linux/libs/security/libcap/psx v1.2.69 // indirect

@@ -1,0 +1,62 @@
+<p>💾 <a href="https://github.com/gnoack/ukuleleweb">Git</a></p>
+<h2>Overview</h2>
+<p>🌺 <a href="/UkuleleWeb">UkuleleWeb</a> is a minimalist Markdown-based wiki loosely based on the design of the original <a href="/WikiWikiWeb">WikiWikiWeb</a>.</p>
+<p>Original Launch announcement:</p>
+<blockquote>
+<p>Got frustrated with overkill wiki software and built my own <a href="/WikiWikiWeb">WikiWikiWeb</a> clone <a href="https://github.com/gnoack/ukuleleweb">https://t.co/kXEUVqWieQ</a> (&lt; 400 LoC of Go, 3 dependencies, syntax is markdown with <a href="/CamelCaseWikiLinks">CamelCaseWikiLinks</a>, 2 shell commands to install and run it). I&rsquo;m using it daily for the past 2 weeks.</p>
+<p>— gnoack (@gnoack3000) February 8, 2022</p>
+</blockquote>
+<h2>Features</h2>
+<p><a href="/UkuleleWeb">UkuleleWeb</a> suppports a small set of features on top:</p>
+<ul>
+<li>Syntax
+<ul>
+<li><strong>Markdown syntax</strong> for wiki pages</li>
+<li><strong>Shortlinks</strong> prefixed with &ldquo;go/&rdquo;: <a href="http://go/wiki">go/wiki</a></li>
+<li><strong>Diagrams in PIC syntax</strong> with <a href="/GoPikchr">GoPikchr</a></li>
+</ul>
+</li>
+<li><strong>Slightly nicer CSS</strong> for tables and inline code blocks</li>
+<li><strong>Backlinks</strong> listed at the bottom of every page</li>
+</ul>
+<p>Some examples: <a href="/UkuleleWebSyntax">UkuleleWebSyntax</a></p>
+<h2>Non-features</h2>
+<p><a href="/UkuleleWeb">UkuleleWeb</a> is opinionated and minimal.</p>
+<p>Instead of adding many features to <a href="/UkuleleWeb">UkuleleWeb</a> itself,
+<a href="/UkuleleWeb">UkuleleWeb</a> exposes its internals so that they are easy to manipulate and extend.
+A variety of things can be done in reverse proxies,
+and pages are stored as plain files on disk for easy manipulation.
+Each file is named like a wiki page and stores that page&rsquo;s Markdown source.</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>How to implement it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Theming</td>
+<td>Override the CSS in a reverse proxy (<a href="/UkuleleWebTheming">UkuleleWebTheming</a>)</td>
+</tr>
+<tr>
+<td>User Authentication</td>
+<td>Implement it in a reverse proxy</td>
+</tr>
+<tr>
+<td>Wiki page versioning</td>
+<td>Use common version control software or file system features on the wiki&rsquo;s file storage</td>
+</tr>
+<tr>
+<td>Special wiki pages</td>
+<td>Can be generated with shell scripts and Unix tools into the storage directory</td>
+</tr>
+</tbody>
+</table>
+<p>It is good to have fewer features,
+because that means that <a href="/UkuleleWeb">UkuleleWeb</a> is solid and stable.</p>
+<h2>Installation</h2>
+<p>Prerequisites: Unix, Go</p>
+<pre><code class="language-good">go install github.com/gnoack/ukuleleweb/cmd/ukuleleweb@latest
+~/go/bin/ukuleleweb -store_dir=/some/emtpy/directory
+</code></pre>

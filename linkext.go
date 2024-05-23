@@ -44,7 +44,6 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 		return nil
 	}
 	line, segment := block.PeekLine()
-
 	// Implementation note:
 	// The trigger above triggers for the given characters, as well as for newlines.
 	// Parse() below must be able to recognize both lines starting with "WikiLink..."
@@ -56,6 +55,7 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 
 		// Move line and segment one character further
 		// and continue the parsing as if we had not started with a space.
+		// e.g. line = "go/foo ..." instead of " go/foo ..."
 		block.Advance(1)
 		line = line[1:]
 		segment = segment.WithStart(segment.Start + 1)
@@ -69,8 +69,9 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 		}()
 	}
 
+	// Match must be at the beginning of the line either way.
 	m := pageNameRE.FindSubmatchIndex(line)
-	if m == nil {
+	if m == nil || m[0] != 0 {
 		m = goLinkRE.FindSubmatchIndex(line)
 	}
 	if m == nil || m[0] != 0 {

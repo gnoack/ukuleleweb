@@ -65,6 +65,22 @@ func TestRender(t *testing.T) {
 			Want:  `<p><a href="http://stuff/">not a WikiLink</a></p>` + "\n",
 		},
 		{
+			Input: "A go/go-link and a subsequent [regular link](http://link/)!",
+			Want:  `<p>A <a href="http://go/go-link">go/go-link</a> and a subsequent <a href="http://link/">regular link</a>!</p>` + "\n",
+		},
+		{
+			Input: "A go/go-link and a subsequent WikiLink!",
+			Want:  `<p>A <a href="http://go/go-link">go/go-link</a> and a subsequent <a href="/WikiLink">WikiLink</a>!</p>` + "\n",
+		},
+		{
+			Input: "A WikiLink and a subsequent go/go-link!",
+			Want:  `<p>A <a href="/WikiLink">WikiLink</a> and a subsequent <a href="http://go/go-link">go/go-link</a>!</p>` + "\n",
+		},
+		{
+			Input: "A [regular link](http://link) and a subsequent WikiLink!",
+			Want:  `<p>A <a href="http://link">regular link</a> and a subsequent <a href="/WikiLink">WikiLink</a>!</p>` + "\n",
+		},
+		{
 			Input: "<!-- not a WikiLink -->",
 			Want:  "<!-- not a WikiLink -->",
 		},
@@ -74,7 +90,7 @@ func TestRender(t *testing.T) {
 			t.Errorf("RenderHTML(%q): %v, want success", tt.Input, err)
 		}
 		if got != tt.Want {
-			t.Errorf("RenderHTML(%q) = %q, want %q", tt.Input, got, tt.Want)
+			t.Errorf("RenderHTML(%q)\n\t   = %q,\n\twant %q", tt.Input, got, tt.Want)
 		}
 	}
 }

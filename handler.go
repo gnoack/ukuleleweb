@@ -73,6 +73,9 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			content = h.D.ReadString(pageName)
 		}
 		pv.SourceContent = content
+
+		// Search engines do not need to index the edit page.
+		w.Header().Set("X-Robots-Tag", "noindex")
 	} else if r.Method == "POST" {
 		content := contentValue(r)
 		err := h.D.WriteString(pageName, content)

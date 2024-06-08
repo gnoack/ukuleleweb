@@ -24,8 +24,8 @@ var templateFiles embed.FS
 
 var (
 	baseTmpl = template.Must(template.New("layout").ParseFS(templateFiles, "templates/base/*.html"))
-	pageTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/page.html"))
-	editTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/edit.html"))
+	PageTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/page.html"))
+	EditTmpl = template.Must(template.Must(baseTmpl.Clone()).ParseFS(templateFiles, "templates/contents/edit.html"))
 )
 
 type pageValues struct {
@@ -58,7 +58,7 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := pageTmpl
+	tmpl := PageTmpl
 	pv := &pageValues{
 		Title:      insertSpaces(pageName),
 		PageName:   pageName,
@@ -67,7 +67,7 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.FormValue("edit") == "1" {
-		tmpl = editTmpl
+		tmpl = EditTmpl
 		content := contentValue(r)
 		if content == "" {
 			content = h.D.ReadString(pageName)
@@ -87,12 +87,12 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		// On error, render edit form with the error message.
 		w.WriteHeader(http.StatusInternalServerError)
-		tmpl = editTmpl
+		tmpl = EditTmpl
 		log.Printf("ERROR: diskv.WriteString(%q, ...): %v\n", pageName, err)
 		pv.Error = "Internal error writing page"
 		pv.SourceContent = content
 	} else {
-		tmpl = pageTmpl
+		tmpl = PageTmpl
 		content := h.D.ReadString(pageName)
 		rendered, err := RenderHTML(content)
 		if err != nil {

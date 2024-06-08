@@ -11,4 +11,5 @@ Linked from: {{range .ReverseLinks}}<a href="/{{.}}">{{.}}</a> {{end}}
 
 <a href="/{{.PageName}}?edit=1">Edit page</a> |
 <a href="/">Start page</a>
+{{- block "nav-extension" . -}} {{- end -}}
 {{- end -}}

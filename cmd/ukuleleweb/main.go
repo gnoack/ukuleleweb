@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
@@ -12,10 +13,12 @@ import (
 )
 
 var (
-	listenNet  = flag.String("net", "tcp", "HTTP listen network (i.e. 'tcp', 'unix')")
-	listenAddr = flag.String("addr", "localhost:8080", "HTTP listen address")
-	storeDir   = flag.String("store_dir", "", "Store directory")
-	mainPage   = flag.String("main_page", "MainPage", "The default page to use as the main page")
+	listenNet    = flag.String("net", "tcp", "HTTP listen network (i.e. 'tcp', 'unix')")
+	listenAddr   = flag.String("addr", "localhost:8080", "HTTP listen address")
+	storeDir     = flag.String("store_dir", "", "Store directory")
+	mainPage     = flag.String("main_page", "MainPage", "The default page to use as the main page")
+	templatePage = flag.String("template.page", "", "A glob for template files to override the page template")
+	templateEdit = flag.String("template.edit", "", "A glob for template files to override the edit template")
 )
 
 func main() {
@@ -25,6 +28,14 @@ func main() {
 		fmt.Fprintln(flag.CommandLine.Output(), "Needs --store_dir")
 		flag.Usage()
 		return
+	}
+
+	if *templatePage != "" {
+		ukuleleweb.PageTmpl = template.Must(ukuleleweb.PageTmpl.ParseGlob(*templatePage))
+	}
+
+	if *templateEdit != "" {
+		ukuleleweb.EditTmpl = template.Must(ukuleleweb.EditTmpl.ParseGlob(*templateEdit))
 	}
 
 	d := diskv.New(diskv.Options{

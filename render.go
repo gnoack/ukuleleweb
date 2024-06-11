@@ -5,11 +5,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gopikchr/goldmark-pikchr"
+	pikchr "github.com/gopikchr/goldmark-pikchr"
 	"github.com/peterbourgon/diskv/v3"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 )
@@ -20,6 +21,9 @@ var gmark = goldmark.New(
 		extension.Typographer,
 		WikiLinkExt,
 		&pikchr.Extender{},
+	),
+	goldmark.WithParserOptions(
+		parser.WithAttribute(),
 	),
 	goldmark.WithRendererOptions(html.WithUnsafe()),
 )

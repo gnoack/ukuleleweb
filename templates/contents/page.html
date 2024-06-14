@@ -5,11 +5,11 @@
 
 {{- define "nav" -}}
 {{if .ReverseLinks -}}
-Linked from: {{range .ReverseLinks}}<a href="/{{.}}">{{.}}</a> {{end}}
+Linked from: {{range .ReverseLinks}}<a href="/{{.}}" rel="nofollow">{{.}}</a> {{end}}
 <br>
 {{end -}}
 
-<a href="/{{.PageName}}?edit=1">Edit page</a> |
-<a href="/">Start page</a>
+<a href="/{{.PageName}}?edit=1" rel="nofollow">Edit page</a> |
+<a href="/" rel="nofollow">Start page</a>
 {{- block "nav-extension" . -}} {{- end -}}
 {{- end -}}

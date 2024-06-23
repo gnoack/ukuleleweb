@@ -22,4 +22,5 @@ func AddRoutes(mux *http.ServeMux, mainPage string, d *diskv.Diskv) {
 		http.Redirect(w, r, "/"+mainPage, http.StatusMovedPermanently)
 	})
 	mux.Handle("/{pageName}", handler)
+	mux.Handle("/edit/{pageName}", handler)
 }

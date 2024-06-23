@@ -66,7 +66,7 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		CSSURL:     *cssURL,
 	}
 
-	if r.FormValue("edit") == "1" {
+	if strings.HasPrefix(r.URL.Path, "/edit/") || r.FormValue("edit") == "1" {
 		tmpl = EditTmpl
 		content := contentValue(r)
 		if content == "" {

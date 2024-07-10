@@ -79,7 +79,11 @@ func main() {
 
 	write, ok := formatters[*outFormat]
 	if !ok {
-		fmt.Fprintf(flag.CommandLine.Output(), "Wrong --out.format, need one of %q\n", formatters)
+		var keys []string
+		for k, _ := range formatters {
+			keys = append(keys, k)
+		}
+		fmt.Fprintf(flag.CommandLine.Output(), "Wrong --out.format, need one of %q\n", keys)
 		flag.Usage()
 		return
 	}

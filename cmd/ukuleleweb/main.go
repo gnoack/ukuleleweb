@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	listenNet    = flag.String("net", "tcp", "HTTP listen network (i.e. 'tcp', 'unix')")
+	listenNet    = flag.String("net", "tcp", "HTTP listen network (e.g. 'tcp', 'unix')")
 	listenAddr   = flag.String("addr", "localhost:8080", "HTTP listen address")
 	storeDir     = flag.String("store_dir", "", "Store directory")
 	mainPage     = flag.String("main_page", "MainPage", "The default page to use as the main page")
@@ -38,11 +38,13 @@ func main() {
 		ukuleleweb.EditTmpl = template.Must(ukuleleweb.EditTmpl.ParseGlob(*templateEdit))
 	}
 
-	d := diskv.New(diskv.Options{
-		BasePath:     *storeDir,
-		CacheSizeMax: 1024 * 1024, // 1MB
+	h := ukuleleweb.NewServer(&ukuleleweb.Config{
+		MainPage: *mainPage,
+		Store: diskv.New(diskv.Options{
+			BasePath:     *storeDir,
+			CacheSizeMax: 1024 * 1024, // 1MB
+		}),
 	})
-	h := ukuleleweb.NewServer(*mainPage, d)
 
 	s := http.Server{Handler: h}
 	l, err := net.Listen(*listenNet, *listenAddr)

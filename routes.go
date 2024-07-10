@@ -10,22 +10,31 @@ import (
 //go:embed static/*
 var staticFiles embed.FS
 
-func NewServer(mainPage string, d *diskv.Diskv) http.Handler {
+type Config struct {
+	MainPage string
+	Store    *diskv.Diskv
+}
+
+func NewServer(cfg *Config) http.Handler {
+	if cfg.MainPage == "" {
+		cfg.MainPage = "MainPage"
+	}
+
 	mux := http.NewServeMux()
-	addRoutes(mux, mainPage, d)
+	addRoutes(mux, cfg)
 	return mux
 }
 
 // addRoutes adds the Ukuleleweb routes to the given ServeMux.
-func addRoutes(mux *http.ServeMux, mainPage string, d *diskv.Diskv) {
+func addRoutes(mux *http.ServeMux, cfg *Config) {
 	mux.Handle("GET /static/", http.FileServer(http.FS(staticFiles)))
 
 	handler := &PageHandler{
-		MainPage: mainPage,
-		D:        d,
+		MainPage: cfg.MainPage,
+		D:        cfg.Store,
 	}
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/"+mainPage, http.StatusMovedPermanently)
+		http.Redirect(w, r, "/"+cfg.MainPage, http.StatusMovedPermanently)
 	})
 	mux.Handle("/{pageName}", handler)
 	mux.Handle("/edit/{pageName}", handler)

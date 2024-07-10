@@ -10,8 +10,14 @@ import (
 //go:embed static/*
 var staticFiles embed.FS
 
-// AddRoutes adds the Ukuleleweb routes to the given ServeMux.
-func AddRoutes(mux *http.ServeMux, mainPage string, d *diskv.Diskv) {
+func NewServer(mainPage string, d *diskv.Diskv) http.Handler {
+	mux := http.NewServeMux()
+	addRoutes(mux, mainPage, d)
+	return mux
+}
+
+// addRoutes adds the Ukuleleweb routes to the given ServeMux.
+func addRoutes(mux *http.ServeMux, mainPage string, d *diskv.Diskv) {
 	mux.Handle("GET /static/", http.FileServer(http.FS(staticFiles)))
 
 	handler := &PageHandler{

@@ -42,9 +42,9 @@ func main() {
 		BasePath:     *storeDir,
 		CacheSizeMax: 1024 * 1024, // 1MB
 	})
-	ukuleleweb.AddRoutes(http.DefaultServeMux, *mainPage, d)
+	h := ukuleleweb.NewServer(*mainPage, d)
 
-	s := http.Server{}
+	s := http.Server{Handler: h}
 	l, err := net.Listen(*listenNet, *listenAddr)
 	if err != nil {
 		log.Fatalf("Could not listen on net %q address %q: %v", *listenNet, *listenAddr, err)

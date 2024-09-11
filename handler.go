@@ -60,7 +60,7 @@ func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := PageTmpl
 	pv := &pageValues{
-		Title:      insertSpaces(pageName),
+		Title:      ToTitle(pageName),
 		PageName:   pageName,
 		FaviconURL: *faviconURL,
 		CSSURL:     *cssURL,
@@ -139,11 +139,14 @@ func isPageName(pn string) bool {
 	return fullPageNameRE.MatchString(pn)
 }
 
-// insertSpaces inserts spaces before every non-leading capital letter
-func insertSpaces(pn string) string {
+// ToTitle turns a given page name into a human-readable title.
+//
+// This means that it inserts a space before every capital letter,
+// except for the first one.
+func ToTitle(pageName string) string {
 	var bld strings.Builder
-	bld.Grow(len(pn) + 3)
-	for pos, rn := range pn {
+	bld.Grow(len(pageName) + 3)
+	for pos, rn := range pageName {
 		if unicode.IsUpper(rn) && pos > 0 {
 			bld.WriteByte(' ')
 		}

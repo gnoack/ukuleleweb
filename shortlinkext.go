@@ -11,38 +11,38 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-var pageNameRE = regexp.MustCompile(`^([A-ZÄÖÜ][a-zäöüß]+){2,}\b`)
+var goLinkRE = regexp.MustCompile(`^go/[A-Za-z0-9#/_+öäüÖÄÜß-]+\b`)
 
-// wikiLinkExt is a goldmark extension for recognizing WikiLinks
-type wikiLinkExt struct{}
+// ShortLinkExt is a goldmark extension for recognizing shortlinks
+// like go/links.
+type ShortLinkExt struct{}
 
-var WikiLinkExt = &wikiLinkExt{}
-
-func (e *wikiLinkExt) Extend(m goldmark.Markdown) {
+func (s *ShortLinkExt) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(
 		parser.WithInlineParsers(
 			// One less than the linkify one - we don't want to mess up http links.
-			util.Prioritized(&wikiLinkParser{}, 998),
+			util.Prioritized(&shortLinkParser{}, 998),
 		),
 	)
 }
 
-// A parser for WikiLinks (resolving to /WikiLinks)
-type wikiLinkParser struct{}
+// A parser for shortlinks like go/links (resolving to
+// http://go/links)
+type shortLinkParser struct{}
 
-func (w *wikiLinkParser) Trigger() []byte {
+func (w *shortLinkParser) Trigger() []byte {
 	return []byte{' ', '('}
 }
 
-func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) (res ast.Node) {
+func (w *shortLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) (res ast.Node) {
 	if pc.IsInLinkLabel() {
 		return nil
 	}
 	line, segment := block.PeekLine()
 	// Implementation note:
 	// The trigger above triggers for the given characters, as well as for newlines.
-	// Parse() below must be able to recognize both lines starting with "WikiLink..."
-	// as well as lines starting with " WikiLink..." (for any leading trigger character).
+	// Parse() below must be able to recognize both lines starting with "go/link..."
+	// as well as lines starting with " go/link..." (for any leading trigger character).
 	// If the line does start with a trigger, then *on a successful parse*,
 	// that trigger must be inserted into the parent node before returning.
 	if len(line) > 0 && slices.Contains(w.Trigger(), line[0]) {
@@ -65,7 +65,7 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	}
 
 	// Match must be at the beginning of the line either way.
-	m := pageNameRE.FindSubmatchIndex(line)
+	m := goLinkRE.FindSubmatchIndex(line)
 	if m == nil || m[0] != 0 {
 		return nil
 	}
@@ -76,6 +76,6 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 
 	link := ast.NewLink()
 	link.AppendChild(link, ast.NewTextSegment(text.NewSegment(segment.Start, segment.Start+m[1])))
-	link.Destination = append([]byte{'/'}, linkText...)
+	link.Destination = append([]byte("http://"), linkText...)
 	return link
 }

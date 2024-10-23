@@ -87,8 +87,8 @@ func TestRender(t *testing.T) {
 			Want:  `<p>A <a href="http://link">regular link</a> and a subsequent <a href="/WikiLink">WikiLink</a>!</p>` + "\n",
 		},
 		{
-			Input: "<!-- not a WikiLink -->",
-			Want:  "<!-- not a WikiLink -->",
+			Input: "<!-- not a WikiLink -->\n",
+			Want:  "<!-- not a WikiLink -->\n",
 		},
 	} {
 		got, err := RenderHTML(tt.Input)

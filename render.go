@@ -19,6 +19,7 @@ var gmark = goldmark.New(
 	goldmark.WithExtensions(
 		extension.GFM,
 		extension.Typographer,
+		extension.Footnote,
 		WikiLinkExt,
 		&ShortLinkExt{},
 		&pikchr.Extender{},

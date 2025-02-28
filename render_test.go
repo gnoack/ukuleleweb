@@ -54,6 +54,38 @@ func TestRender(t *testing.T) {
 			Want:  `<p>Hello <a href="http://go/go-link">go/go-link</a>!</p>` + "\n",
 		},
 		{
+			Input: "Hello unknown/go-link!",
+			Want:  `<p>Hello unknown/go-link!</p>` + "\n",
+		},
+		{
+			Input: "Hello go/link.with.dots!",
+			Want:  `<p>Hello <a href="http://go/link.with.dots">go/link.with.dots</a>!</p>` + "\n",
+		},
+		{
+			Input: "A link: go/link.with.dots.",
+			Want:  `<p>A link: <a href="http://go/link.with.dots">go/link.with.dots</a>.</p>` + "\n",
+		},
+		{
+			Input: "A link: go/link.with.dots, right?",
+			Want:  `<p>A link: <a href="http://go/link.with.dots">go/link.with.dots</a>, right?</p>` + "\n",
+		},
+		{
+			Input: "A link: (go/link.in.brackets).",
+			Want:  `<p>A link: (<a href="http://go/link.in.brackets">go/link.in.brackets</a>).</p>` + "\n",
+		},
+		{
+			Input: "A link: go/a/b/c.",
+			Want:  `<p>A link: <a href="http://go/a/b/c">go/a/b/c</a>.</p>` + "\n",
+		},
+		{
+			Input: "A link: go/a.b/c.",
+			Want:  `<p>A link: <a href="http://go/a.b/c">go/a.b/c</a>.</p>` + "\n",
+		},
+		{
+			Input: "A link with comma: go/a,b/c.",
+			Want:  `<p>A link with comma: <a href="http://go/a,b/c">go/a,b/c</a>.</p>` + "\n",
+		},
+		{
 			Input: "Hello go/long/go-link!",
 			Want:  `<p>Hello <a href="http://go/long/go-link">go/long/go-link</a>!</p>` + "\n",
 		},

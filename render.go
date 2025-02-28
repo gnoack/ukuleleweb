@@ -2,8 +2,11 @@ package ukuleleweb
 
 import (
 	"bytes"
+	"flag"
+	"log"
 	"sort"
 	"strings"
+	"sync"
 
 	pikchr "github.com/gopikchr/goldmark-pikchr"
 	"github.com/peterbourgon/diskv/v3"
@@ -15,24 +18,60 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-var gmark = goldmark.New(
-	goldmark.WithExtensions(
-		extension.GFM,
-		extension.Typographer,
-		extension.Footnote,
-		WikiLinkExt,
-		&ShortLinkExt{},
-		&pikchr.Extender{},
-	),
-	goldmark.WithParserOptions(
-		parser.WithAttribute(),
-	),
-	goldmark.WithRendererOptions(html.WithUnsafe()),
+var (
+	once  sync.Once
+	gmark goldmark.Markdown
+
+	shortlinkPrefixes = flag.String("md.shortlinks", "go=http://go/", "Accepted shortlink prefixes, comma-separated list of prefix=URL pairs")
 )
+
+func mustParseShortlinkFlag(sl string) map[string]string {
+	res := make(map[string]string)
+	for _, pair := range strings.Split(sl, ",") {
+		pair = strings.TrimSpace(pair)
+		if pair == "" {
+			continue
+		}
+		parts := strings.SplitN(pair, "=", 2)
+		if len(parts) != 2 {
+			log.Fatalf("Invalid shortlink pair %q, expected a key=value pair", pair)
+		}
+		// Sanitize URLs a bit, it should be possible to pass bare domain names
+		// and URLs that are missing the trailing slash.
+		url := parts[1]
+		if !strings.HasPrefix(url, "http") {
+			url = "https://" + url
+		}
+		if !strings.HasSuffix(url, "/") {
+			url += "/"
+		}
+		res[strings.TrimSpace(parts[0])] = strings.TrimSpace(url)
+	}
+	return res
+}
+
+func wikiGmark() goldmark.Markdown {
+	once.Do(func() {
+		gmark = goldmark.New(
+			goldmark.WithExtensions(
+				extension.GFM,
+				extension.Typographer,
+				WikiLinkExt,
+				&ShortLinkExt{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
+				&pikchr.Extender{},
+			),
+			goldmark.WithParserOptions(
+				parser.WithAttribute(),
+			),
+			goldmark.WithRendererOptions(html.WithUnsafe()),
+		)
+	})
+	return gmark
+}
 
 func RenderHTML(md string) (string, error) {
 	var buf bytes.Buffer
-	if err := gmark.Convert([]byte(md), &buf); err != nil {
+	if err := wikiGmark().Convert([]byte(md), &buf); err != nil {
 		return "", err
 	}
 	return string(buf.Bytes()), nil
@@ -43,7 +82,7 @@ func RenderHTML(md string) (string, error) {
 func OutgoingLinks(md string) map[string]bool {
 	found := make(map[string]bool)
 	reader := text.NewReader([]byte(md))
-	doc := gmark.Parser().Parse(reader)
+	doc := wikiGmark().Parser().Parse(reader)
 	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil

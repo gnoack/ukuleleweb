@@ -91,7 +91,7 @@ func main() {
 		feed.Add(&feeds.Item{
 			Title:       ukuleleweb.ToTitle(filepath.Base(fn)),
 			Link:        &feeds.Link{Href: *baseURL + filepath.Base(fn)},
-			Created:     st.BirthTime(),
+			Created:     earlier(st.BirthTime(), st.ModTime()),
 			Updated:     st.ModTime(),
 			Description: html,
 		})
@@ -111,4 +111,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("template rendering: %v", err)
 	}
+}
+
+func earlier(a, b time.Time) time.Time {
+	if a.Before(b) {
+		return a
+	}
+	return b
 }

@@ -28,6 +28,7 @@ func NewServer(cfg *Config) http.Handler {
 // addRoutes adds the Ukuleleweb routes to the given ServeMux.
 func addRoutes(mux *http.ServeMux, cfg *Config) {
 	mux.Handle("GET /static/", http.FileServer(http.FS(staticFiles)))
+	mux.HandleFunc("POST /preview", previewHandler)
 
 	handler := &PageHandler{
 		MainPage: cfg.MainPage,

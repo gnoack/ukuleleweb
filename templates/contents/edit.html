@@ -1,11 +1,44 @@
 {{- define "content" -}}
 <h1>{{.Title}}</h1>
+<aside id="preview"></aside>
 <form id="edit-page" method="post" accept-charset="utf-8" action="/{{.PageName}}">
 <textarea name="content" rows="40" cols="80" autofocus>
 {{- .SourceContent -}}
 </textarea>
 <button type="submit">Save</button>
 </form>
+<script>
+const editor = document.querySelector('textarea[name="content"]');
+const preview = document.getElementById('preview');
+let throttleTimer;
+
+async function updatePreview() {
+	if (window.getComputedStyle(preview).display === 'none') {
+		return; // Don't update if preview is not visible.
+	}
+	const response = await fetch('/preview', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'text/plain; charset=UTF-8',
+		},
+		body: editor.value,
+	});
+	if (!response.ok) {
+		preview.innerHTML = `<div class="error">Error updating preview: ${response.status} ${response.statusText}</div>`;
+		return;
+	}
+	preview.innerHTML = await response.text();
+}
+
+function schedulePreviewUpdate() {
+	clearTimeout(throttleTimer);
+	throttleTimer = setTimeout(updatePreview, 250); // 250ms throttle
+}
+
+editor.addEventListener('input', schedulePreviewUpdate);
+// Initial preview on page load.
+updatePreview();
+</script>
 {{- end -}}
 
 {{- define "nav" -}}

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"regexp"
@@ -158,4 +159,22 @@ func ToTitle(pageName string) string {
 
 func contentValue(r *http.Request) string {
 	return strings.ReplaceAll(r.FormValue("content"), "\r\n", "\n")
+}
+
+func previewHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Only POST requests are allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
+		return
+	}
+	rendered, err := RenderHTML(string(body))
+	if err != nil {
+		http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte(rendered))
 }

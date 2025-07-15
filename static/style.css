@@ -46,3 +46,20 @@ code.language-good {
     color: #181;
     background-color: #0f01;
 }
+
+#preview {
+    display: none;
+    float: right;
+    margin-right: -105%;
+    width: 100%;
+}
+
+/* The default textarea is 80 columns. Let's assume 1ch is about 0.5em.
+   So 80 cols is about 40em. We need space for two of them, plus gap.
+   So about 81em. Let's use that as a breakpoint.
+*/
+@media (min-width: 105em) {
+    #preview {
+        display: block;
+    }
+}

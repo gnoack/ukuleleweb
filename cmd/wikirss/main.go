@@ -41,14 +41,6 @@ func main() {
 		log.Fatalf("missing --wiki.baseURL")
 	}
 
-	type Page struct {
-		Filename string
-		Title    string
-		Link     string
-		PubDate  time.Time
-		HTML     string
-	}
-
 	// Canonicalize base URL (must end with /)
 	*baseURL, _ = strings.CutSuffix(*baseURL, "/")
 	*baseURL = *baseURL + "/"

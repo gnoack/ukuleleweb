@@ -1,6 +1,6 @@
 module github.com/gnoack/ukuleleweb
 
-go 1.24
+go 1.24.0
 
 toolchain go1.24.5
 
@@ -10,10 +10,10 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/gopikchr/goldmark-pikchr v0.0.0-20240615035710-11e0b8fab5b9
 	github.com/gorilla/feeds v1.2.0
-	github.com/landlock-lsm/go-landlock v0.0.0-20241014143150-479ddab4c04c
+	github.com/landlock-lsm/go-landlock v0.0.0-20251025113214-9234528b1102
 	github.com/peterbourgon/diskv/v3 v3.0.1
-	github.com/yuin/goldmark v1.7.6
-	golang.org/x/sys v0.29.0
+	github.com/yuin/goldmark v1.7.13
+	golang.org/x/sys v0.37.0
 )
 
 require (
@@ -24,6 +24,6 @@ require (
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.4.0 // indirect
 	github.com/google/btree v1.1.3 // indirect
-	github.com/gopikchr/gopikchr v0.0.0-20221215031430-01a0b7befa01 // indirect
-	kernel.org/pub/linux/libs/security/libcap/psx v1.2.70 // indirect
+	github.com/gopikchr/gopikchr v0.0.0-20250322012037-e1eb69640ea7 // indirect
+	kernel.org/pub/linux/libs/security/libcap/psx v1.2.76 // indirect
 )

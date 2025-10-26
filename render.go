@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 
+	shortlink "github.com/gnoack/goldmark-shortlink"
 	pikchr "github.com/gopikchr/goldmark-pikchr"
 	"github.com/peterbourgon/diskv/v3"
 	"github.com/yuin/goldmark"
@@ -57,7 +58,7 @@ func wikiGmark() goldmark.Markdown {
 				extension.GFM,
 				extension.Typographer,
 				WikiLinkExt,
-				&ShortLinkExt{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
+				&shortlink.Extender{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
 				&pikchr.Extender{},
 			),
 			goldmark.WithParserOptions(

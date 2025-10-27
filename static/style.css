@@ -37,6 +37,20 @@ pre > code {
     border-radius: 0.5em;
 }
 
+blockquote {
+    padding: 0.5em 1em;
+    margin: 0.5em 0;
+    --accent-color: black;
+    border-left: 0.7em solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+    background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);
+    border-radius: 0.2rem;
+}
+
+.warning { --accent-color: red; }
+.info    { --accent-color: #ffba00; }
+.rule    { --accent-color: green; }
+.def     { --accent-color: blue; }
+
 code.language-bad {
     color: #f33;
     background-color: #f001;

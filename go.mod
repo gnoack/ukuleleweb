@@ -26,5 +26,6 @@ require (
 	github.com/gobwas/ws v1.4.0 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/gopikchr/gopikchr v0.0.0-20250322012037-e1eb69640ea7 // indirect
+	github.com/mdigger/goldmark-attributes v0.0.0-20250724115859-bd3108091530 // indirect
 	kernel.org/pub/linux/libs/security/libcap/psx v1.2.76 // indirect
 )

@@ -10,6 +10,7 @@ import (
 
 	shortlink "github.com/gnoack/goldmark-shortlink"
 	pikchr "github.com/gopikchr/goldmark-pikchr"
+	attributes "github.com/mdigger/goldmark-attributes"
 	"github.com/peterbourgon/diskv/v3"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -60,6 +61,7 @@ func wikiGmark() goldmark.Markdown {
 				WikiLinkExt,
 				&shortlink.Extender{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
 				&pikchr.Extender{},
+				attributes.Extension,
 			),
 			goldmark.WithParserOptions(
 				parser.WithAttribute(),

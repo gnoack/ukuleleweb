@@ -103,11 +103,6 @@ func (h *PageHandler) serveSave(w http.ResponseWriter, r *http.Request, pageName
 }
 
 func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request, pageName string) {
-	if r.FormValue("edit") == "1" {
-		http.Redirect(w, r, "/edit/"+pageName, http.StatusFound)
-		return
-	}
-
 	content := h.D.ReadString(pageName)
 	rendered, err := RenderHTML(content)
 	if err != nil {

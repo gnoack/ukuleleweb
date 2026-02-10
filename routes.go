@@ -22,7 +22,16 @@ func NewServer(cfg *Config) http.Handler {
 
 	mux := http.NewServeMux()
 	addRoutes(mux, cfg)
-	return mux
+	return noReferrer(mux)
+}
+
+// noReferrer wraps a handler to set a no-referrer Referrer-Policy header.
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+func noReferrer(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Referrer-Policy", "no-referrer")
+		h.ServeHTTP(w, r)
+	})
 }
 
 // addRoutes adds the Ukuleleweb routes to the given ServeMux.
@@ -37,7 +46,7 @@ func addRoutes(mux *http.ServeMux, cfg *Config) {
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/"+cfg.MainPage, http.StatusMovedPermanently)
 	})
-	mux.Handle("GET /edit/{pageName}", handler.pageHandler(handler.serveEdit))
-	mux.Handle("POST /{pageName}", handler.pageHandler(handler.serveSave))
-	mux.Handle("GET /{pageName}", handler.pageHandler(handler.serveView))
+	mux.HandleFunc("GET /edit/{pageName}", handler.serveEdit)
+	mux.HandleFunc("POST /{pageName}", handler.serveSave)
+	mux.HandleFunc("GET /{pageName}", handler.serveView)
 }

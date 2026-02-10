@@ -49,22 +49,12 @@ type PageHandler struct {
 	revLinks   map[string][]string
 }
 
-// pageHandler wraps a handler function with page name validation and common headers.
-func (h *PageHandler) pageHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
-		w.Header().Set("Referrer-Policy", "no-referrer")
-
-		pageName := r.PathValue("pageName")
-		if !isPageName(pageName) {
-			http.Error(w, "Invalid page name", http.StatusNotFound)
-			return
-		}
-		fn(w, r, pageName)
+func (h *PageHandler) serveEdit(w http.ResponseWriter, r *http.Request) {
+	pageName := r.PathValue("pageName")
+	if !isPageName(pageName) {
+		http.Error(w, "Invalid page name", http.StatusNotFound)
+		return
 	}
-}
-
-func (h *PageHandler) serveEdit(w http.ResponseWriter, r *http.Request, pageName string) {
 	content := contentValue(r)
 	if content == "" {
 		content = h.D.ReadString(pageName)
@@ -80,7 +70,12 @@ func (h *PageHandler) serveEdit(w http.ResponseWriter, r *http.Request, pageName
 	}
 }
 
-func (h *PageHandler) serveSave(w http.ResponseWriter, r *http.Request, pageName string) {
+func (h *PageHandler) serveSave(w http.ResponseWriter, r *http.Request) {
+	pageName := r.PathValue("pageName")
+	if !isPageName(pageName) {
+		http.Error(w, "Invalid page name", http.StatusNotFound)
+		return
+	}
 	content := contentValue(r)
 	err := h.D.WriteString(pageName, content)
 	if err == nil {
@@ -102,7 +97,12 @@ func (h *PageHandler) serveSave(w http.ResponseWriter, r *http.Request, pageName
 	}
 }
 
-func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request, pageName string) {
+func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request) {
+	pageName := r.PathValue("pageName")
+	if !isPageName(pageName) {
+		http.Error(w, "Invalid page name", http.StatusNotFound)
+		return
+	}
 	content := h.D.ReadString(pageName)
 	rendered, err := RenderHTML(content)
 	if err != nil {

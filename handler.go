@@ -49,65 +49,86 @@ type PageHandler struct {
 	revLinks   map[string][]string
 }
 
-func (h *PageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
-	w.Header().Set("Referrer-Policy", "no-referrer")
+// pageHandler wraps a handler function with page name validation and common headers.
+func (h *PageHandler) pageHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+		w.Header().Set("Referrer-Policy", "no-referrer")
 
-	pageName := r.PathValue("pageName")
-	if !isPageName(pageName) {
-		http.Error(w, "Invalid page name", http.StatusNotFound)
+		pageName := r.PathValue("pageName")
+		if !isPageName(pageName) {
+			http.Error(w, "Invalid page name", http.StatusNotFound)
+			return
+		}
+		fn(w, r, pageName)
+	}
+}
+
+func (h *PageHandler) serveEdit(w http.ResponseWriter, r *http.Request, pageName string) {
+	content := contentValue(r)
+	if content == "" {
+		content = h.D.ReadString(pageName)
+	}
+
+	// Search engines do not need to index the edit page.
+	w.Header().Set("X-Robots-Tag", "noindex")
+
+	pv := h.newPageValues(pageName)
+	pv.SourceContent = content
+	if err := EditTmpl.Execute(w, pv); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *PageHandler) serveSave(w http.ResponseWriter, r *http.Request, pageName string) {
+	content := contentValue(r)
+	err := h.D.WriteString(pageName, content)
+	if err == nil {
+		// TODO: Potentially do it in a background job?
+		h.recalculateRevLinks()
+		http.Redirect(w, r, "/"+pageName, http.StatusFound)
 		return
 	}
 
-	tmpl := PageTmpl
-	pv := &pageValues{
+	// On error, render edit form with the error message.
+	log.Printf("ERROR: diskv.WriteString(%q, ...): %v\n", pageName, err)
+	w.WriteHeader(http.StatusInternalServerError)
+
+	pv := h.newPageValues(pageName)
+	pv.Error = "Internal error writing page"
+	pv.SourceContent = content
+	if err := EditTmpl.Execute(w, pv); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request, pageName string) {
+	if r.FormValue("edit") == "1" {
+		http.Redirect(w, r, "/edit/"+pageName, http.StatusFound)
+		return
+	}
+
+	content := h.D.ReadString(pageName)
+	rendered, err := RenderHTML(content)
+	if err != nil {
+		http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
+		return
+	}
+
+	pv := h.newPageValues(pageName)
+	pv.HTMLContent = template.HTML(rendered)
+	pv.ReverseLinks = h.reverseLinks(pageName)
+	if err := PageTmpl.Execute(w, pv); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (h *PageHandler) newPageValues(pageName string) *pageValues {
+	return &pageValues{
 		Title:      ToTitle(pageName),
 		PageName:   pageName,
 		FaviconURL: *faviconURL,
 		CSSURL:     *cssURL,
-	}
-
-	if strings.HasPrefix(r.URL.Path, "/edit/") || r.FormValue("edit") == "1" {
-		tmpl = EditTmpl
-		content := contentValue(r)
-		if content == "" {
-			content = h.D.ReadString(pageName)
-		}
-		pv.SourceContent = content
-
-		// Search engines do not need to index the edit page.
-		w.Header().Set("X-Robots-Tag", "noindex")
-	} else if r.Method == "POST" {
-		content := contentValue(r)
-		err := h.D.WriteString(pageName, content)
-		if err == nil { // Success saving! This is the default case.
-			// TODO: Potentially do it in a background job?
-			h.recalculateRevLinks()
-			http.Redirect(w, r, "/"+pageName, http.StatusFound)
-			return
-		}
-		// On error, render edit form with the error message.
-		w.WriteHeader(http.StatusInternalServerError)
-		tmpl = EditTmpl
-		log.Printf("ERROR: diskv.WriteString(%q, ...): %v\n", pageName, err)
-		pv.Error = "Internal error writing page"
-		pv.SourceContent = content
-	} else {
-		tmpl = PageTmpl
-		content := h.D.ReadString(pageName)
-		rendered, err := RenderHTML(content)
-		if err != nil {
-			http.Error(w, "Failed to render markdown", http.StatusInternalServerError)
-			return
-		}
-		pv.HTMLContent = template.HTML(rendered)
-		pv.ReverseLinks = h.reverseLinks(pageName)
-
-	}
-	err := tmpl.Execute(w, pv)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
@@ -162,10 +183,6 @@ func contentValue(r *http.Request) string {
 }
 
 func previewHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST requests are allowed", http.StatusMethodNotAllowed)
-		return
-	}
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusInternalServerError)

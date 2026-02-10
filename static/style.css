@@ -50,6 +50,17 @@ blockquote {
 .rule    { --accent-color: green; }
 .def     { --accent-color: blue; }
 
+.infobox {
+    border: 1px solid black;
+    border-radius: 0;
+    background-color: white;
+    box-shadow: 2px 2px 0 black;
+}
+
+code {
+    color: darkgreen;
+}
+
 code.language-bad {
     color: #f33;
     background-color: #f001;

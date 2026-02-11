@@ -97,8 +97,22 @@ func (h *PageHandler) serveSave(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *PageHandler) serveRaw(w http.ResponseWriter, pageName string) {
+	if !isPageName(pageName) {
+		http.Error(w, "Invalid page name", http.StatusNotFound)
+		return
+	}
+	content := h.D.ReadString(pageName)
+	w.Header().Set("Content-Type", "text/markdown; charset=utf-8")
+	io.WriteString(w, content)
+}
+
 func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request) {
 	pageName := r.PathValue("pageName")
+	if raw := strings.TrimSuffix(pageName, ".md"); raw != pageName {
+		h.serveRaw(w, raw)
+		return
+	}
 	if !isPageName(pageName) {
 		http.Error(w, "Invalid page name", http.StatusNotFound)
 		return

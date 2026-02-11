@@ -39,6 +39,7 @@ func TestInvalidPageName(t *testing.T) {
 		{"ViewInvalidPage", "GET", "/notapage"},
 		{"EditInvalidPage", "GET", "/edit/notapage"},
 		{"SaveInvalidPage", "POST", "/notapage"},
+		{"RawInvalidPage", "GET", "/notapage.md"},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequest(tt.method, ts.URL+tt.path, nil)
@@ -120,6 +121,37 @@ func TestSavePage(t *testing.T) {
 	}
 	if !strings.Contains(string(body), "hello") {
 		t.Errorf("GET /TestPage body does not contain saved content %q", "hello")
+	}
+}
+
+func TestRawMarkdown(t *testing.T) {
+	ts := testServer(t)
+
+	// Save a page first.
+	resp, err := noRedirectClient.Post(ts.URL+"/TestPage", "application/x-www-form-urlencoded", strings.NewReader("content=Hello+*World*!"))
+	if err != nil {
+		t.Fatalf("POST /TestPage: %v", err)
+	}
+	resp.Body.Close()
+
+	// Fetch the raw markdown.
+	resp, err = http.Get(ts.URL + "/TestPage.md")
+	if err != nil {
+		t.Fatalf("GET /TestPage.md: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("Status code = %d, want %d", resp.StatusCode, http.StatusOK)
+	}
+	if got := resp.Header.Get("Content-Type"); got != "text/markdown; charset=utf-8" {
+		t.Errorf("Content-Type = %q, want %q", got, "text/markdown; charset=utf-8")
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("io.ReadAll: %v", err)
+	}
+	if got, want := string(body), "Hello *World*!"; got != want {
+		t.Errorf("Body = %q, want %q", got, want)
 	}
 }
 

@@ -3,6 +3,7 @@ package ukuleleweb_test
 import (
 	"context"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -22,11 +23,12 @@ func TestWebDriver(t *testing.T) {
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
-	opts := []chromedp.ExecAllocatorOption{
-		chromedp.NoFirstRun,
-		chromedp.NoDefaultBrowserCheck,
+	opts := append(
+		chromedp.DefaultExecAllocatorOptions[:],
 		chromedp.DisableGPU,
-		chromedp.Headless,
+	)
+	if os.Getenv("CI") != "" {
+		opts = append(opts, chromedp.NoSandbox)
 	}
 	ctx, cancel := chromedp.NewExecAllocator(t.Context(), opts...)
 	defer cancel()

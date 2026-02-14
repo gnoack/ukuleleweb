@@ -58,6 +58,7 @@ func wikiGmark() goldmark.Markdown {
 			goldmark.WithExtensions(
 				extension.GFM,
 				extension.Typographer,
+				extension.DefinitionList,
 				WikiLinkExt,
 				&shortlink.Extender{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
 				&pikchr.Extender{},

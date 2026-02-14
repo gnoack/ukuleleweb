@@ -29,6 +29,11 @@ th, td {
     padding: 0.5em;
 }
 
+dt {
+    font-weight: bold;
+    margin-top: 1em;
+}
+
 pre > code {
     padding: 1em;
     display: block;

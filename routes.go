@@ -47,6 +47,6 @@ func addRoutes(mux *http.ServeMux, cfg *Config) {
 		http.Redirect(w, r, "/"+cfg.MainPage, http.StatusMovedPermanently)
 	})
 	mux.HandleFunc("GET /edit/{pageName}", handler.serveEdit)
-	mux.HandleFunc("POST /{pageName}", handler.serveSave)
+	mux.HandleFunc("POST /edit/{pageName}", handler.serveSave)
 	mux.HandleFunc("GET /{pageName}", handler.serveView)
 }

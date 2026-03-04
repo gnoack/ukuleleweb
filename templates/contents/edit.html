@@ -1,7 +1,7 @@
 {{- define "content" -}}
 <h1>{{.Title}}</h1>
 <aside id="preview"></aside>
-<form id="edit-page" method="post" accept-charset="utf-8" action="/{{.PageName}}">
+<form id="edit-page" method="post" accept-charset="utf-8" action="/edit/{{.PageName}}">
 <textarea name="content" rows="40" cols="80" autofocus>
 {{- .SourceContent -}}
 </textarea>

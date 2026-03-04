@@ -38,7 +38,7 @@ func TestInvalidPageName(t *testing.T) {
 	}{
 		{"ViewInvalidPage", "GET", "/notapage"},
 		{"EditInvalidPage", "GET", "/edit/notapage"},
-		{"SaveInvalidPage", "POST", "/notapage"},
+		{"SaveInvalidPage", "POST", "/edit/notapage"},
 		{"RawInvalidPage", "GET", "/notapage.md"},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,9 +97,9 @@ func TestPreview(t *testing.T) {
 func TestSavePage(t *testing.T) {
 	ts := testServer(t)
 
-	resp, err := noRedirectClient.Post(ts.URL+"/TestPage", "application/x-www-form-urlencoded", strings.NewReader("content=hello"))
+	resp, err := noRedirectClient.Post(ts.URL+"/edit/TestPage", "application/x-www-form-urlencoded", strings.NewReader("content=hello"))
 	if err != nil {
-		t.Fatalf("POST /TestPage: %v", err)
+		t.Fatalf("POST /edit/TestPage: %v", err)
 	}
 	resp.Body.Close()
 	if resp.StatusCode != http.StatusFound {
@@ -128,9 +128,9 @@ func TestRawMarkdown(t *testing.T) {
 	ts := testServer(t)
 
 	// Save a page first.
-	resp, err := noRedirectClient.Post(ts.URL+"/TestPage", "application/x-www-form-urlencoded", strings.NewReader("content=Hello+*World*!"))
+	resp, err := noRedirectClient.Post(ts.URL+"/edit/TestPage", "application/x-www-form-urlencoded", strings.NewReader("content=Hello+*World*!"))
 	if err != nil {
-		t.Fatalf("POST /TestPage: %v", err)
+		t.Fatalf("POST /edit/TestPage: %v", err)
 	}
 	resp.Body.Close()
 

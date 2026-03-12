@@ -58,12 +58,11 @@ pre > code {
 }
 
 blockquote {
-    padding: 0.5em 1em;
+    padding: 0.8rem 1.2rem;
     margin: 0.5em 0;
     --accent-color: black;
-    border-left: 0.7em solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+    border-left: 0.2em solid color-mix(in srgb, var(--accent-color) 60%, transparent);
     background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);
-    border-radius: 0.2rem;
 }
 
 .warning { --accent-color: red; }

@@ -15,25 +15,24 @@ import (
 	"github.com/gorilla/feeds"
 )
 
-var (
-	title       = flag.String("wiki.title", "", "Wiki title")
-	baseURL     = flag.String("wiki.baseURL", "", "Wiki base URL")
-	description = flag.String("wiki.description", "", "Wiki description")
-	maxItems    = flag.Int("feed.maxItems", 20, "Maximum number of items")
-	suppress    = flag.String("suppress", "", "If set, suppress pages whose markdown contains this string")
-)
-
-func main() {
-	flag.Usage = func() {
-		o := flag.CommandLine.Output()
-		fmt.Fprintf(o, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(o, "  %s [FLAGS] [FILENAME...]\n\n", os.Args[0])
+func runRss(args []string) {
+	fs := flag.NewFlagSet("uku rss", flag.ExitOnError)
+	fs.Usage = func() {
+		o := fs.Output()
+		fmt.Fprintf(o, "Usage: uku rss [FLAGS] [FILENAME...]\n\n")
 		fmt.Fprintf(o, "Flags:\n")
-		flag.PrintDefaults()
+		fs.PrintDefaults()
 	}
-	flag.Parse()
 
-	filenames := flag.Args()
+	title := fs.String("wiki.title", "", "Wiki title")
+	baseURL := fs.String("wiki.baseURL", "", "Wiki base URL")
+	description := fs.String("wiki.description", "", "Wiki description")
+	maxItems := fs.Int("feed.maxItems", 20, "Maximum number of items")
+	suppress := fs.String("suppress", "", "If set, suppress pages whose markdown contains this string")
+
+	fs.Parse(args)
+
+	filenames := fs.Args()
 	if *title == "" {
 		log.Fatalf("missing --wiki.title")
 	}

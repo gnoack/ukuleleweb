@@ -14,11 +14,6 @@ import (
 	"github.com/peterbourgon/diskv/v3"
 )
 
-var (
-	storeDir  = flag.String("store_dir", "", "Store directory")
-	outFormat = flag.String("out.format", "dot", `output format ("dot" or "json")`)
-)
-
 type PageInfo struct {
 	OutgoingLinks []string `json:"outgoingLinks"`
 	Size          int      `json:"size"`
@@ -35,7 +30,7 @@ func writeDigraphDot(w io.Writer, links map[string]PageInfo) {
 	fmt.Fprintln(w, "\tnode [color=red];")
 
 	fmt.Fprintln(w)
-	for pn, _ := range links {
+	for pn := range links {
 		fmt.Fprintf(w, "\t%v [color=black shape=box];\n", pn)
 	}
 
@@ -59,33 +54,35 @@ func writeDigraphJson(w io.Writer, links map[string]PageInfo) {
 	}
 }
 
-func main() {
-	flag.Usage = func() {
-		o := flag.CommandLine.Output()
-		fmt.Fprintf(o, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(o, "\t%s -store_dir=/path/to/wiki | neato -Tsvg > out.svg\n", os.Args[0])
-		fmt.Fprintln(o)
+func runViz(args []string) {
+	fs := flag.NewFlagSet("uku viz", flag.ExitOnError)
+	fs.Usage = func() {
+		o := fs.Output()
+		fmt.Fprintf(o, "Usage: uku viz -store_dir=/path/to/wiki | neato -Tsvg > out.svg\n\n")
 		fmt.Fprintln(o, "Flags:")
-		flag.PrintDefaults()
+		fs.PrintDefaults()
 	}
 
-	flag.Parse()
+	storeDir := fs.String("store_dir", "", "Store directory")
+	outFormat := fs.String("out.format", "dot", `output format ("dot" or "json")`)
+
+	fs.Parse(args)
 
 	if *storeDir == "" {
-		fmt.Fprintln(flag.CommandLine.Output(), "Needs --store_dir")
-		flag.Usage()
-		return
+		fmt.Fprintln(fs.Output(), "Needs --store_dir")
+		fs.Usage()
+		os.Exit(1)
 	}
 
 	write, ok := formatters[*outFormat]
 	if !ok {
 		var keys []string
-		for k, _ := range formatters {
+		for k := range formatters {
 			keys = append(keys, k)
 		}
-		fmt.Fprintf(flag.CommandLine.Output(), "Wrong --out.format, need one of %q\n", keys)
-		flag.Usage()
-		return
+		fmt.Fprintf(fs.Output(), "Wrong --out.format, need one of %q\n", keys)
+		fs.Usage()
+		os.Exit(1)
 	}
 
 	d := diskv.New(diskv.Options{
@@ -97,7 +94,7 @@ func main() {
 	for pn := range d.Keys(nil) {
 		md := d.ReadString(pn)
 		info := PageInfo{Size: len(md), OutgoingLinks: []string{}}
-		for ogPn, _ := range ukuleleweb.OutgoingLinks(md) {
+		for ogPn := range ukuleleweb.OutgoingLinks(md) {
 			info.OutgoingLinks = append(info.OutgoingLinks, ogPn)
 		}
 		links[pn] = info

@@ -9,10 +9,15 @@ import (
 	"github.com/gnoack/ukuleleweb"
 )
 
-func main() {
-	flag.Parse()
+func runRender(args []string) {
+	fs := flag.NewFlagSet("uku render", flag.ExitOnError)
+	fs.Usage = func() {
+		fmt.Fprintf(fs.Output(), "Usage: uku render [FILENAME...]\n\n")
+		fmt.Fprintf(fs.Output(), "Render markdown files to HTML.\n")
+	}
+	fs.Parse(args)
 
-	for _, fn := range flag.Args() {
+	for _, fn := range fs.Args() {
 		md, err := os.ReadFile(fn)
 		if err != nil {
 			log.Fatalf("ReadFile(%q): %v\n", fn, err)

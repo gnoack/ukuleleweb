@@ -15,6 +15,10 @@ static:
     go run ./cmd/uku static -out_dir=public -site_title="UkuleleWeb Demo" -url_style=flat testdata/wiki/*
 
 [group('maintainer')]
+update-golden:
+    go test -run 'TestFullPageRendering|TestRenderStaticHTMLGolden' -update .
+
+[group('maintainer')]
 [working-directory: 'testdata/wiki']
 @update-example-wiki:
     for f in *; do echo "${f}"; curl -s -o "${f}" "https://wiki.gnoack.org/${f}.md"; done

@@ -176,19 +176,24 @@ func TestFullPageRendering(t *testing.T) {
 	}
 
 	for _, dirent := range entries {
-		var (
-			pageName = dirent.Name()
-			wikiPath = filepath.Join("testdata", "wiki", pageName)
-			wantPath = filepath.Join("testdata", "want", pageName)
-			md       = mustReadFile(t, wikiPath)
-			want     = mustReadFile(t, wantPath)
-		)
-
+		pageName := dirent.Name()
 		t.Run(pageName, func(t *testing.T) {
+			var (
+				wikiPath = filepath.Join("testdata", "wiki", pageName)
+				wantPath = filepath.Join("testdata", "want", pageName)
+				md       = mustReadFile(t, wikiPath)
+			)
 			got, err := RenderHTML(md)
 			if err != nil {
 				t.Fatalf("RenderHTML: unexpected error: %v", err)
 			}
+			if *update {
+				if err := os.WriteFile(wantPath, []byte(got), 0666); err != nil {
+					t.Fatalf("os.WriteFile(%q): %v", wantPath, err)
+				}
+				return
+			}
+			want := mustReadFile(t, wantPath)
 			if diff := cmp.Diff(got, want); diff != "" {
 				t.Errorf("RenderHTML: unexpected output (-got +want):\n%v", diff)
 			}

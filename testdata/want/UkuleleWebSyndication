@@ -1,0 +1,43 @@
+<p>An RSS file (<a href="/ReallySimpleSyndication">ReallySimpleSyndication</a>) for <a href="/UkuleleWeb">UkuleleWeb</a> can be generated with the <code>uku rss</code> tool.</p>
+<p>An example invocation is:</p>
+<pre><code class="language-good">uku rss -wiki.title=&quot;My wiki&quot; -wiki.base_url=https://wiki.gnoack.org/ wikidir/*
+</code></pre>
+<p>The output of the tool is the RSS file.</p>
+<p>You can invoke this in a cron job on your webserver and make it available as a static file.</p>
+<h2>Controlling included pages</h2>
+<p>You can control the included pages using either of:</p>
+<ul>
+<li>Passing a different list of pages on the command line</li>
+<li>Passing a <code>-suppress</code> flag (a marker in markdown files that indicates pages to exclude)</li>
+</ul>
+<h2>Other flags</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-feed.max_items</code></td>
+<td>Maximum number of feed items</td>
+</tr>
+<tr>
+<td><code>-feed.suppress</code></td>
+<td>If set, suppress pages whose markdown contains this string</td>
+</tr>
+<tr>
+<td><code>-wiki.base_url</code></td>
+<td>base URL, e.g. <code>https://wiki.gnoack.org/</code> (required)</td>
+</tr>
+<tr>
+<td><code>-wiki.title</code></td>
+<td>site name (required)</td>
+</tr>
+<tr>
+<td><code>-wiki.description</code></td>
+<td>longer site description</td>
+</tr>
+</tbody>
+</table>

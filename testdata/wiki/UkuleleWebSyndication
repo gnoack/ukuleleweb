@@ -1,0 +1,28 @@
+An RSS file (ReallySimpleSyndication) for UkuleleWeb can be generated with the `uku rss` tool.
+
+An example invocation is:
+
+```good
+uku rss -wiki.title="My wiki" -wiki.base_url=https://wiki.gnoack.org/ wikidir/*
+```
+
+The output of the tool is the RSS file.
+
+You can invoke this in a cron job on your webserver and make it available as a static file.
+
+## Controlling included pages
+
+You can control the included pages using either of:
+
+* Passing a different list of pages on the command line
+* Passing a `-suppress` flag (a marker in markdown files that indicates pages to exclude)
+
+## Other flags
+
+Flag                | Meaning
+--------------------|------------------------------------------------------------
+`-feed.max_items`   | Maximum number of feed items
+`-feed.suppress`    | If set, suppress pages whose markdown contains this string
+`-wiki.base_url`    | base URL, e.g. `https://wiki.gnoack.org/` (required)
+`-wiki.title`       | site name (required)
+`-wiki.description` | longer site description

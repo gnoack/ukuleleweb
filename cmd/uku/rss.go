@@ -25,10 +25,10 @@ func runRss(args []string) {
 	}
 
 	title := fs.String("wiki.title", "", "Wiki title")
-	baseURL := fs.String("wiki.baseURL", "", "Wiki base URL")
+	baseURL := fs.String("wiki.base_url", "", "Wiki base URL")
 	description := fs.String("wiki.description", "", "Wiki description")
-	maxItems := fs.Int("feed.maxItems", 20, "Maximum number of items")
-	suppress := fs.String("suppress", "", "If set, suppress pages whose markdown contains this string")
+	maxItems := fs.Int("feed.max_items", 20, "Maximum number of items")
+	suppress := fs.String("feed.suppress", "", "If set, suppress pages whose markdown contains this string")
 
 	fs.Parse(args)
 
@@ -37,7 +37,7 @@ func runRss(args []string) {
 		log.Fatalf("missing --wiki.title")
 	}
 	if *baseURL == "" {
-		log.Fatalf("missing --wiki.baseURL")
+		log.Fatalf("missing --wiki.base_url")
 	}
 
 	// Canonicalize base URL (must end with /)

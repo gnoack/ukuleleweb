@@ -23,18 +23,18 @@ func runStatic(args []string) {
 		fs.PrintDefaults()
 	}
 
-	outDir := fs.String("out_dir", "", "Output directory for static files")
-	baseURL := fs.String("base_url", "/", "Base URL where the site will be deployed")
-	siteTitle := fs.String("site_title", "", "Site title appended to each page's <title>")
-	urlStyle := fs.String("url_style", "dir", `URL style: "dir" (PageName/index.html) or "flat" (PageName.html)`)
+	outDir := fs.String("out.dir", "", "Output directory for static files")
+	baseURL := fs.String("wiki.base_url", "/", "Base URL where the site will be deployed")
+	siteTitle := fs.String("wiki.title", "", "Site title appended to each page's <title>")
+	urlStyle := fs.String("out.url_style", "dir", `URL style: "dir" (PageName/index.html) or "flat" (PageName.html)`)
 
 	fs.Parse(args)
 
 	if *outDir == "" {
-		log.Fatalf("missing --out_dir")
+		log.Fatalf("missing --out.dir")
 	}
 	if *urlStyle != "dir" && *urlStyle != "flat" {
-		log.Fatalf(`--url_style must be "dir" or "flat"`)
+		log.Fatalf(`--out.url_style must be "dir" or "flat"`)
 	}
 
 	// Canonicalize base URL (must end with /)

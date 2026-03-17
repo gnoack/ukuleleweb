@@ -12,7 +12,7 @@ testserver:
 [group('example')]
 static:
     mkdir -p public
-    go run ./cmd/uku static -out_dir=public -site_title="UkuleleWeb Demo" -url_style=flat testdata/wiki/*
+    go run ./cmd/uku static -out.dir=public -wiki.title="UkuleleWeb Demo" -out.url_style=flat testdata/wiki/*
 
 [group('maintainer')]
 update-golden:

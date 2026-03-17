@@ -1,0 +1,61 @@
+<h2>Markdown</h2>
+<p>Markdown <em>is</em> <strong>supported</strong>.</p>
+<ul>
+<li>One</li>
+<li>Two</li>
+<li>Three</li>
+</ul>
+<pre><code>some code
+</code></pre>
+<pre><code class="language-good">some good code
+</code></pre>
+<pre><code class="language-bad">some bad code
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>A</th>
+<th>Table</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>One</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Two</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Three</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>An blockquote</p>
+</blockquote>
+<blockquote class="info"><p>An info</p>
+</blockquote>
+<blockquote class="warning"><p>A warning</p>
+</blockquote>
+<blockquote class="def"><p>A definition</p>
+</blockquote>
+<blockquote class="rule"><p>A rule</p>
+</blockquote>
+<h2>Diagrams</h2>
+<p>Diagrams use <a href="/GoPikchr">GoPikchr</a> syntax, which is a derivative of the original <code>pic</code> language for describing diagrams.</p>
+<div id='pikchr-0' class='pikchr'>
+<div class='pikchr-svg' style='max-width:328px'>
+<svg xmlns='http://www.w3.org/2000/svg' style='font-size:initial;' viewBox="0 0 328.32 76.32" data-pikchr-date="20250319">
+<path d="M2.16,74.16L110.16,74.16L110.16,2.16L2.16,2.16Z"  style="fill:rgb(255,228,196);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="56.16" y="38.16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Calvin</text>
+<polygon points="218.16,38.16 206.64,42.48 206.64,33.84" style="fill:rgb(0,0,0)"/>
+<path d="M110.16,38.16L212.4,38.16"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="164.16" y="26.46" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">transmogrify</text>
+<path d="M218.16,74.16L326.16,74.16L326.16,2.16L218.16,2.16Z"  style="fill:rgb(255,165,0);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="272.16" y="38.16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Tiger</text>
+</svg>
+</div>
+</div>

@@ -1,0 +1,11 @@
+<h2>Override the CSS</h2>
+<p>Set the <code>--brand.css_url</code> flag to point to a different CSS file.</p>
+<p>You can base your CSS on the existing CSS with an <code>@import</code> statement:</p>
+<pre><code class="language-good">@import url(&quot;/static/style.css&quot;);
+
+body {
+    background-color: #fff6dc;
+}
+</code></pre>
+<h2>Override the favicon</h2>
+<p>Set the <code>--brand.favicon_url</code> flag to set a different favicon.</p>

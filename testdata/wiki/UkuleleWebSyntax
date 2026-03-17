@@ -1,0 +1,50 @@
+## Markdown
+
+Markdown *is* **supported**.
+
+* One
+* Two
+* Three
+
+```
+some code
+```
+
+```good
+some good code
+```
+
+```bad
+some bad code
+```
+
+A | Table
+--|------------
+1 | One
+2 | Two
+3 | Three
+
+> An blockquote
+
+> An info
+{.info}
+
+> A warning
+{.warning}
+
+> A definition
+{.def}
+
+> A rule
+{.rule}
+
+## Diagrams
+
+Diagrams use GoPikchr syntax, which is a derivative of the original `pic` language for describing diagrams.
+
+```pikchr
+fill = bisque
+box "Calvin"
+arrow 150% "transmogrify" above
+box "Tiger" fill orange
+```

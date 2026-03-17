@@ -1,0 +1,22 @@
+Gopikchr is a pure Go implementation of the PikChr language for describing technical diagrams
+
+The text
+
+    ```pikchr
+    fill = mintcream
+    box "Hello"
+    arrow
+    box "World"
+    ```
+
+is rendered as:
+
+```pikchr
+fill = mintcream
+box "Hello"
+arrow
+box "World"
+```
+
+URL: https://github.com/gopikchr/gopikchr
+

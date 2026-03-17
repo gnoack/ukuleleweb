@@ -1,0 +1,19 @@
+UkuleleWeb stores the markdown of all pages in plain text files, so that you can use normal file system utilities to create backups or historical archives.
+
+## Example: Use `git`
+
+A simple option is to put your wiki directory under git version control. In a periodic cron job, execute the following git command:
+
+```good
+git commit -am 'Periodic changes'
+```
+
+## Example: Use other backup tools
+
+Any other file system backup tool will work as well to create an archive of your wiki contents.
+
+## Example: Use built-in file system versioning
+
+Some file systems offer built-in snapshots or file versioning.  This is often the case for Copy-on-Write file systems like ZFS or [BtrFS].
+
+[BtrFS]: https://en.m.wikipedia.org/wiki/Btrfs

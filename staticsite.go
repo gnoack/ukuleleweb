@@ -21,7 +21,19 @@ var StaticPageTmpl = template.Must(
 	template.ParseFS(templateFiles, "templates/static/page.html"),
 )
 
-// WriteStaticAssets copies the embedded CSS, JS, and favicon to dir/static/.
+// StaticDestFunc returns a destFunc for NewGoldmark that rewrites wiki link
+// destinations for static site deployment. baseURL is prepended to each page
+// name; if urlStyle is "flat", a ".html" suffix is appended.
+func StaticDestFunc(baseURL, urlStyle string) func(string) string {
+	return func(pageName string) string {
+		if urlStyle == "flat" {
+			return baseURL + pageName + ".html"
+		}
+		return baseURL + pageName
+	}
+}
+
+// WriteStaticAssets copies the embedded static resources to dir/static/.
 func WriteStaticAssets(dir string) error {
 	return fs.WalkDir(staticFiles, "static", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {

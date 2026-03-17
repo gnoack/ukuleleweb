@@ -27,6 +27,24 @@ var (
 	shortlinkPrefixes = flag.String("md.shortlinks", "go=http://go/", "Accepted shortlink prefixes, comma-separated list of prefix=URL pairs")
 )
 
+func NewGoldmark(destFunc func(string) string) goldmark.Markdown {
+	return goldmark.New(
+		goldmark.WithExtensions(
+			extension.GFM,
+			extension.Typographer,
+			extension.DefinitionList,
+			&wikiLinkExt{destFunc: destFunc},
+			&shortlink.Extender{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
+			&pikchr.Extender{},
+			attributes.Extension,
+		),
+		goldmark.WithParserOptions(
+			parser.WithAttribute(),
+		),
+		goldmark.WithRendererOptions(html.WithUnsafe()),
+	)
+}
+
 func mustParseShortlinkFlag(sl string) map[string]string {
 	res := make(map[string]string)
 	for _, pair := range strings.Split(sl, ",") {
@@ -53,23 +71,7 @@ func mustParseShortlinkFlag(sl string) map[string]string {
 }
 
 func wikiGmark() goldmark.Markdown {
-	once.Do(func() {
-		gmark = goldmark.New(
-			goldmark.WithExtensions(
-				extension.GFM,
-				extension.Typographer,
-				extension.DefinitionList,
-				WikiLinkExt,
-				&shortlink.Extender{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
-				&pikchr.Extender{},
-				attributes.Extension,
-			),
-			goldmark.WithParserOptions(
-				parser.WithAttribute(),
-			),
-			goldmark.WithRendererOptions(html.WithUnsafe()),
-		)
-	})
+	once.Do(func() { gmark = NewGoldmark(nil) })
 	return gmark
 }
 

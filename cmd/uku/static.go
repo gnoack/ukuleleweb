@@ -1,20 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/gnoack/ukuleleweb"
 )
-
-// wikiLinkRE matches href attributes pointing to wiki pages (e.g. href="/PageName").
-var wikiLinkRE = regexp.MustCompile(`href="/([A-Z][a-zA-Z0-9]*)"`)
 
 func runStatic(args []string) {
 	fs := flag.NewFlagSet("uku static", flag.ExitOnError)
@@ -51,6 +48,8 @@ func runStatic(args []string) {
 		log.Fatalf("WriteStaticAssets: %v", err)
 	}
 
+	gmark := ukuleleweb.NewGoldmark(ukuleleweb.StaticDestFunc(*baseURL, *urlStyle))
+
 	for _, fn := range fs.Args() {
 		pageName := filepath.Base(fn)
 		md, err := os.ReadFile(fn)
@@ -58,11 +57,11 @@ func runStatic(args []string) {
 			log.Fatalf("ReadFile(%q): %v", fn, err)
 		}
 
-		html, err := ukuleleweb.RenderHTML(string(md))
-		if err != nil {
-			log.Fatalf("RenderHTML(%q): %v", pageName, err)
+		var buf bytes.Buffer
+		if err := gmark.Convert(md, &buf); err != nil {
+			log.Fatalf("gmark.Convert(%q): %v", pageName, err)
 		}
-		html = rewriteLinks(html, *baseURL, *urlStyle)
+		html := buf.String()
 
 		outPath := pageOutputPath(*outDir, pageName, *urlStyle)
 		if err := os.MkdirAll(filepath.Dir(outPath), 0777); err != nil {
@@ -97,12 +96,3 @@ func pageOutputPath(outDir, pageName, urlStyle string) string {
 	return filepath.Join(outDir, pageName, "index.html")
 }
 
-func rewriteLinks(html, baseURL, urlStyle string) string {
-	return wikiLinkRE.ReplaceAllStringFunc(html, func(match string) string {
-		pageName := wikiLinkRE.FindStringSubmatch(match)[1]
-		if urlStyle == "flat" {
-			return fmt.Sprintf(`href="%s%s.html"`, baseURL, pageName)
-		}
-		return fmt.Sprintf(`href="%s%s"`, baseURL, pageName)
-	})
-}

@@ -13,22 +13,26 @@ import (
 
 var pageNameRE = regexp.MustCompile(`^([A-ZÄÖÜ][a-zäöüß]+){2,}\b`)
 
-// wikiLinkExt is a goldmark extension for recognizing WikiLinks
-type wikiLinkExt struct{}
-
-var WikiLinkExt = &wikiLinkExt{}
+// wikiLinkExt is a goldmark extension for recognizing WikiLinks.
+// If destFunc is non-nil, it is called with the page name to produce
+// the link destination. If nil, the destination defaults to "/"+pageName.
+type wikiLinkExt struct {
+	destFunc func(pageName string) string
+}
 
 func (e *wikiLinkExt) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(
 		parser.WithInlineParsers(
 			// One less than the linkify one - we don't want to mess up http links.
-			util.Prioritized(&wikiLinkParser{}, 998),
+			util.Prioritized(&wikiLinkParser{destFunc: e.destFunc}, 998),
 		),
 	)
 }
 
 // A parser for WikiLinks (resolving to /WikiLinks)
-type wikiLinkParser struct{}
+type wikiLinkParser struct {
+	destFunc func(pageName string) string
+}
 
 func (w *wikiLinkParser) Trigger() []byte {
 	return []byte{' ', '('}
@@ -76,6 +80,10 @@ func (w *wikiLinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 
 	link := ast.NewLink()
 	link.AppendChild(link, ast.NewTextSegment(text.NewSegment(segment.Start, segment.Start+m[1])))
-	link.Destination = append([]byte{'/'}, linkText...)
+	dest := "/" + string(linkText)
+	if w.destFunc != nil {
+		dest = w.destFunc(string(linkText))
+	}
+	link.Destination = []byte(dest)
 	return link
 }

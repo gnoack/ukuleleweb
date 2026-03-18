@@ -1,33 +1,84 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gnoack/ukuleleweb"
 )
 
+// templateValues holds template data for uku render --out.template.
+type templateValues struct {
+	Title       string
+	SiteTitle   string
+	HTMLContent template.HTML
+}
+
 func runRender(args []string) {
 	fs := flag.NewFlagSet("uku render", flag.ExitOnError)
 	fs.Usage = func() {
-		fmt.Fprintf(fs.Output(), "Usage: uku render [FILENAME...]\n\n")
-		fmt.Fprintf(fs.Output(), "Render markdown files to HTML.\n")
+		fmt.Fprintf(fs.Output(), "Usage: uku render [FLAGS] FILENAME\n\n")
+		fmt.Fprintf(fs.Output(), "Render a markdown file to HTML.\n\n")
+		fmt.Fprintf(fs.Output(), "Flags:\n")
+		fs.PrintDefaults()
 	}
+
+	tmplFile := fs.String("out.template", "", "Go html/template file to wrap rendered content (variables: .Title, .SiteTitle, .HTMLContent)")
+	baseURL := fs.String("wiki.base_url", "/", "Base URL for wiki link rewriting")
+	urlStyle := fs.String("out.url_style", "dir", `URL style for wiki links: "dir" (PageName/) or "flat" (PageName.html)`)
+	siteTitle := fs.String("wiki.title", "", "Site title, exposed as .SiteTitle in the template")
+
 	fs.Parse(args)
 
-	for _, fn := range fs.Args() {
-		md, err := os.ReadFile(fn)
+	if fs.NArg() != 1 {
+		fs.Usage()
+		os.Exit(1)
+	}
+
+	if *urlStyle != "dir" && *urlStyle != "flat" {
+		log.Fatalf(`--out.url_style must be "dir" or "flat"`)
+	}
+	if *siteTitle != "" && *tmplFile == "" {
+		log.Fatalf("--wiki.title requires --out.template")
+	}
+
+	var tmpl *template.Template
+	if *tmplFile != "" {
+		var err error
+		tmpl, err = template.ParseFiles(*tmplFile)
 		if err != nil {
-			log.Fatalf("ReadFile(%q): %v\n", fn, err)
-			continue
+			log.Fatalf("template.ParseFiles(%q): %v", *tmplFile, err)
 		}
-		html, err := ukuleleweb.RenderHTML(string(md))
-		if err != nil {
-			log.Fatalf("RenderHTML(ReadFile(%q)): %v", fn, err)
-			continue
+	}
+
+	gmark := ukuleleweb.NewGoldmark(ukuleleweb.StaticDestFunc(*baseURL, *urlStyle))
+
+	fn := fs.Arg(0)
+	md, err := os.ReadFile(fn)
+	if err != nil {
+		log.Fatalf("ReadFile(%q): %v", fn, err)
+	}
+
+	var buf bytes.Buffer
+	if err := gmark.Convert(md, &buf); err != nil {
+		log.Fatalf("gmark.Convert(%q): %v", fn, err)
+	}
+
+	if tmpl != nil {
+		values := templateValues{
+			Title:       ukuleleweb.ToTitle(filepath.Base(fn)),
+			SiteTitle:   *siteTitle,
+			HTMLContent: template.HTML(buf.String()),
 		}
-		fmt.Print(html)
+		if err := tmpl.Execute(os.Stdout, values); err != nil {
+			log.Fatalf("tmpl.Execute(%q): %v", fn, err)
+		}
+	} else {
+		fmt.Print(buf.String())
 	}
 }

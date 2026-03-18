@@ -1,3 +1,7 @@
+set allow-duplicate-recipes
+
+import? 'local.just'
+
 @default:
     just --list
 
@@ -13,6 +17,7 @@ testserver:
 static:
     mkdir -p public
     go run ./cmd/uku static -out.dir=public -wiki.title="UkuleleWeb Demo" -out.url_style=flat testdata/wiki/*
+    @echo "You can bring up a web server using: python -m http.server"
 
 [group('maintainer')]
 update-golden:

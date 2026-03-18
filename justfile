@@ -14,10 +14,8 @@ testserver:
     go run ./cmd/ukuleleweb --store_dir=testdata/wiki --main_page=UkuleleWeb -md.shortlinks=man=https://man.gnoack.org/
 
 [group('example')]
-static:
-    mkdir -p public
-    go run ./cmd/uku static -out.dir=public -wiki.title="UkuleleWeb Demo" -out.url_style=flat testdata/wiki/*
-    @echo "You can bring up a web server using: python -m http.server"
+static wiki_dir="testdata/wiki" out_dir="public" template="staticsite/page.html":
+    make -f staticsite/Makefile WIKI_DIR={{wiki_dir}} OUT_DIR={{out_dir}} TEMPLATE={{template}} UKU="go run ./cmd/uku"
 
 [group('maintainer')]
 update-golden:

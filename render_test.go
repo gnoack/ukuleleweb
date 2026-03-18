@@ -1,15 +1,20 @@
 package ukuleleweb
 
 import (
+	"bytes"
+	"flag"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/yuin/goldmark"
 
 	_ "embed"
 )
+
+var update = flag.Bool("update", false, "update golden files")
 
 func TestRender(t *testing.T) {
 	for _, tt := range []struct{ Input, Want string }{
@@ -196,6 +201,79 @@ func TestFullPageRendering(t *testing.T) {
 			want := mustReadFile(t, wantPath)
 			if diff := cmp.Diff(got, want); diff != "" {
 				t.Errorf("RenderHTML: unexpected output (-got +want):\n%v", diff)
+			}
+		})
+	}
+}
+
+func staticDestFunc(baseURL, urlStyle string) func(string) string {
+	return func(pageName string) string {
+		if urlStyle == "flat" {
+			return baseURL + pageName + ".html"
+		}
+		return baseURL + pageName
+	}
+}
+
+func renderWithGoldmark(t *testing.T, gmark goldmark.Markdown, md string) string {
+	t.Helper()
+	var buf bytes.Buffer
+	if err := gmark.Convert([]byte(md), &buf); err != nil {
+		t.Fatalf("Convert: %v", err)
+	}
+	return buf.String()
+}
+
+func TestStaticDestFuncDefaultMatchesRenderHTML(t *testing.T) {
+	// With baseURL="/" and urlStyle="dir", staticDestFunc should produce
+	// identical output to RenderHTML since link destinations are unchanged.
+	entries, err := os.ReadDir(filepath.Join("testdata", "wiki"))
+	if err != nil {
+		t.Fatalf("os.ReadDir: %v", err)
+	}
+	for _, dirent := range entries {
+		pageName := dirent.Name()
+		md := mustReadFile(t, filepath.Join("testdata", "wiki", pageName))
+		t.Run(pageName, func(t *testing.T) {
+			want, err := RenderHTML(md)
+			if err != nil {
+				t.Fatalf("RenderHTML: %v", err)
+			}
+			got := renderWithGoldmark(t, NewGoldmark(staticDestFunc("/", "dir")), md)
+			if diff := cmp.Diff(got, want); diff != "" {
+				t.Errorf("NewGoldmark(staticDestFunc(\"/\", \"dir\")) != RenderHTML (-got +want):\n%v", diff)
+			}
+		})
+	}
+}
+
+func TestRenderStaticHTMLGolden(t *testing.T) {
+	for _, tt := range []struct {
+		pageName string
+		baseURL  string
+		urlStyle string
+	}{
+		{"UkuleleWeb", "/", "flat"},
+		{"UkuleleWeb", "https://example.com/wiki/", "dir"},
+	} {
+		goldenName := tt.pageName + "." + tt.urlStyle
+		t.Run(goldenName, func(t *testing.T) {
+			md := mustReadFile(t, filepath.Join("testdata", "wiki", tt.pageName))
+			got := renderWithGoldmark(t, NewGoldmark(staticDestFunc(tt.baseURL, tt.urlStyle)), md)
+			wantPath := filepath.Join("testdata", "static_want", goldenName)
+			if *update {
+				if err := os.MkdirAll(filepath.Dir(wantPath), 0777); err != nil {
+					t.Fatalf("os.MkdirAll: %v", err)
+				}
+				if err := os.WriteFile(wantPath, []byte(got), 0666); err != nil {
+					t.Fatalf("os.WriteFile(%q): %v", wantPath, err)
+				}
+				return
+			}
+			want := mustReadFile(t, wantPath)
+			if diff := cmp.Diff(got, want); diff != "" {
+				t.Errorf("RenderStaticHTML(%q, %q, %q): unexpected output (-got +want):\n%v",
+					tt.pageName, tt.baseURL, tt.urlStyle, diff)
 			}
 		})
 	}

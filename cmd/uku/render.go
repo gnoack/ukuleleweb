@@ -56,7 +56,7 @@ func runRender(args []string) {
 		}
 	}
 
-	gmark := ukuleleweb.NewGoldmark(ukuleleweb.StaticDestFunc(*baseURL, *urlStyle))
+	gmark := ukuleleweb.NewGoldmark(staticDestFunc(*baseURL, *urlStyle))
 
 	fn := fs.Arg(0)
 	md, err := os.ReadFile(fn)
@@ -80,5 +80,17 @@ func runRender(args []string) {
 		}
 	} else {
 		fmt.Print(buf.String())
+	}
+}
+
+// staticDestFunc returns a destFunc for NewGoldmark that rewrites wiki link
+// destinations for static site deployment. baseURL is prepended to each page
+// name; if urlStyle is "flat", a ".html" suffix is appended.
+func staticDestFunc(baseURL, urlStyle string) func(string) string {
+	return func(pageName string) string {
+		if urlStyle == "flat" {
+			return baseURL + pageName + ".html"
+		}
+		return baseURL + pageName
 	}
 }

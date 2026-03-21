@@ -109,7 +109,7 @@ func (h *PageHandler) serveRaw(w http.ResponseWriter, pageName string) {
 
 func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request) {
 	pageName := r.PathValue("pageName")
-	if raw := strings.TrimSuffix(pageName, ".md"); raw != pageName {
+	if raw, ok := strings.CutSuffix(pageName, ".md"); ok {
 		h.serveRaw(w, raw)
 		return
 	}

@@ -47,7 +47,7 @@ func NewGoldmark(destFunc func(string) string) goldmark.Markdown {
 
 func mustParseShortlinkFlag(sl string) map[string]string {
 	res := make(map[string]string)
-	for _, pair := range strings.Split(sl, ",") {
+	for pair := range strings.SplitSeq(sl, ",") {
 		pair = strings.TrimSpace(pair)
 		if pair == "" {
 			continue

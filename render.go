@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	shortlink "github.com/gnoack/goldmark-shortlink"
+	ukulele "github.com/gnoack/goldmark-ukulele"
 	pikchr "github.com/gopikchr/goldmark-pikchr"
 	attributes "github.com/mdigger/goldmark-attributes"
 	"github.com/peterbourgon/diskv/v3"
@@ -36,6 +37,7 @@ func NewGoldmark(destFunc func(string) string) goldmark.Markdown {
 			&wikiLinkExt{destFunc: destFunc},
 			&shortlink.Extender{Prefixes: mustParseShortlinkFlag(*shortlinkPrefixes)},
 			&pikchr.Extender{},
+			&ukulele.Extender{},
 			attributes.Extension,
 		),
 		goldmark.WithParserOptions(

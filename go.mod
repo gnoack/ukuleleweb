@@ -1,13 +1,12 @@
 module github.com/gnoack/ukuleleweb
 
-go 1.24.0
-
-toolchain go1.24.5
+go 1.26.0
 
 require (
 	github.com/chromedp/chromedp v0.13.7
 	github.com/djherbis/times v1.6.0
 	github.com/gnoack/goldmark-shortlink v0.0.0-20251026160332-70a09761b661
+	github.com/gnoack/goldmark-ukulele v0.0.0-20260405100852-fdf16e19ea0f
 	github.com/google/go-cmp v0.6.0
 	github.com/gopikchr/goldmark-pikchr v0.0.0-20240615035710-11e0b8fab5b9
 	github.com/gorilla/feeds v1.2.0

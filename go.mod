@@ -10,7 +10,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/gopikchr/goldmark-pikchr v0.0.0-20240615035710-11e0b8fab5b9
 	github.com/gorilla/feeds v1.2.0
-	github.com/landlock-lsm/go-landlock v0.6.0
+	github.com/landlock-lsm/go-landlock v0.8.0
 	github.com/mdigger/goldmark-attributes v0.0.0-20250724115859-bd3108091530
 	github.com/peterbourgon/diskv/v3 v3.0.1
 	github.com/yuin/goldmark v1.7.16

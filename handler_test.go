@@ -155,6 +155,40 @@ func TestRawMarkdown(t *testing.T) {
 	}
 }
 
+func TestContentNegotiationMarkdown(t *testing.T) {
+	ts := testServer(t)
+
+	resp, err := noRedirectClient.Post(ts.URL+"/edit/TestPage", "application/x-www-form-urlencoded", strings.NewReader("content=Hello+*World*!"))
+	if err != nil {
+		t.Fatalf("POST /edit/TestPage: %v", err)
+	}
+	resp.Body.Close()
+
+	req, err := http.NewRequest("GET", ts.URL+"/TestPage", nil)
+	if err != nil {
+		t.Fatalf("http.NewRequest: %v", err)
+	}
+	req.Header.Set("Accept", "text/markdown")
+	resp, err = http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("GET /TestPage with Accept text/markdown: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("Status code = %d, want %d", resp.StatusCode, http.StatusOK)
+	}
+	if got, want := resp.Header.Get("Content-Type"), "text/markdown; charset=utf-8"; got != want {
+		t.Errorf("Content-Type = %q, want %q", got, want)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("io.ReadAll: %v", err)
+	}
+	if got, want := string(body), "Hello *World*!"; got != want {
+		t.Errorf("Body = %q, want %q", got, want)
+	}
+}
+
 func TestIsPageName(t *testing.T) {
 	for _, pn := range []string{
 		"PageName",

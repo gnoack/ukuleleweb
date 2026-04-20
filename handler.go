@@ -107,6 +107,12 @@ func (h *PageHandler) serveRaw(w http.ResponseWriter, pageName string) {
 	io.WriteString(w, content)
 }
 
+// acceptsMarkdown reports whether the request's Accept header includes text/markdown.
+// No registered media type has "text/markdown" as a substring, so Contains suffices.
+func acceptsMarkdown(r *http.Request) bool {
+	return strings.Contains(r.Header.Get("Accept"), "text/markdown")
+}
+
 func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request) {
 	pageName := r.PathValue("pageName")
 	if raw, ok := strings.CutSuffix(pageName, ".md"); ok {
@@ -115,6 +121,10 @@ func (h *PageHandler) serveView(w http.ResponseWriter, r *http.Request) {
 	}
 	if !isPageName(pageName) {
 		http.Error(w, "Invalid page name", http.StatusNotFound)
+		return
+	}
+	if acceptsMarkdown(r) {
+		h.serveRaw(w, pageName)
 		return
 	}
 	content := h.D.ReadString(pageName)

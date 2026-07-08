@@ -9,6 +9,13 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: gofmt
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            gofmt -d .
+            exit 1
+          fi
+      - run: go vet ./...
       - run: go test ./...
         env:
           CHROMEDP_CHROME_PATH: google-chrome-stable

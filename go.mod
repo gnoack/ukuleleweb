@@ -3,7 +3,7 @@ module github.com/gnoack/ukuleleweb
 go 1.26.0
 
 require (
-	github.com/chromedp/chromedp v0.13.7
+	github.com/chromedp/chromedp v0.15.1
 	github.com/djherbis/times v1.6.0
 	github.com/gnoack/goldmark-shortlink v0.0.0-20251026160332-70a09761b661
 	github.com/gnoack/goldmark-ukulele v0.0.0-20260405100852-fdf16e19ea0f
@@ -18,9 +18,9 @@ require (
 )
 
 require (
-	github.com/chromedp/cdproto v0.0.0-20250403032234-65de8f5d025b // indirect
+	github.com/chromedp/cdproto v0.0.0-20260321001828-e3e3800016bc // indirect
 	github.com/chromedp/sysutil v1.1.0 // indirect
-	github.com/go-json-experiment/json v0.0.0-20250211171154-1ae217ad3535 // indirect
+	github.com/go-json-experiment/json v0.0.0-20260214004413-d219187c3433 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.4.0 // indirect

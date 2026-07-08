@@ -20,3 +20,6 @@ jobs:
       - run: go test ./...
         env:
           CHROMEDP_CHROME_PATH: google-chrome-stable
+      - uses: golang/govulncheck-action@v1
+        with:
+          go-version-file: go.mod

@@ -104,7 +104,7 @@ code.language-good {
     }
     main:has(#preview) {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 2em;
     }
     main:has(#preview) > h1 {
@@ -112,5 +112,6 @@ code.language-good {
     }
     #preview {
         display: block;
+        overflow-x: auto;
     }
 }

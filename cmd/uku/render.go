@@ -15,6 +15,7 @@ import (
 // templateValues holds template data for uku render --out.template.
 type templateValues struct {
 	Title       string
+	PageName    string
 	SiteTitle   string
 	HTMLContent template.HTML
 }
@@ -72,6 +73,7 @@ func runRender(args []string) {
 	if tmpl != nil {
 		values := templateValues{
 			Title:       ukuleleweb.ToTitle(filepath.Base(fn)),
+			PageName:    filepath.Base(fn),
 			SiteTitle:   *siteTitle,
 			HTMLContent: template.HTML(buf.String()),
 		}

@@ -11,7 +11,7 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-var pageNameRE = regexp.MustCompile(`^([A-ZÄÖÜ][a-zäöüß]+){2,}\b`)
+var pageNameRE = regexp.MustCompile(`^([A-ZÄÖÜ][a-zäëöüß]+){2,}\b`)
 
 // wikiLinkExt is a goldmark extension for recognizing WikiLinks.
 // If destFunc is non-nil, it is called with the page name to produce

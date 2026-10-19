@@ -3,7 +3,7 @@ module github.com/gnoack/ukuleleweb
 go 1.26.0
 
 require (
-	github.com/chromedp/chromedp v0.20.1
+	github.com/chromedp/chromedp v0.21.0
 	github.com/djherbis/times v1.6.0
 	github.com/gnoack/goldmark-shortlink v0.0.0-20251026160332-70a09761b661
 	github.com/gnoack/goldmark-ukulele v0.0.0-20260405100852-fdf16e19ea0f

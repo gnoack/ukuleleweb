@@ -10,7 +10,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/gopikchr/goldmark-pikchr v0.0.0-20240615035710-11e0b8fab5b9
 	github.com/gorilla/feeds v1.2.0
-	github.com/landlock-lsm/go-landlock v0.11.0
+	github.com/landlock-lsm/go-landlock v0.11.2
 	github.com/mdigger/goldmark-attributes v0.0.0-20250724115859-bd3108091530
 	github.com/peterbourgon/diskv/v3 v3.0.1
 	github.com/yuin/goldmark v1.8.7
@@ -22,5 +22,5 @@ require (
 	github.com/go-json-experiment/json v0.0.0-20260623181947-01eb4420fa68 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/gopikchr/gopikchr v0.0.0-20251102185413-ac35dc1606f8 // indirect
-	kernel.org/pub/linux/libs/security/libcap/psx v1.2.77 // indirect
+	kernel.org/pub/linux/libs/security/libcap/psx v1.2.78 // indirect
 )
